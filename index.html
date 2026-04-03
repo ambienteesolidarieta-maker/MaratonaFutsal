@@ -12,7 +12,6 @@
       --border:rgba(255,255,255,.10);
       --text:#f8fafc;
       --muted:#94a3b8;
-      --accent:#ffffff;
       --shadow:0 20px 60px rgba(0,0,0,.45);
     }
 
@@ -44,34 +43,35 @@
 
     .wrap{
       width:100%;
-      max-width:900px;
+      max-width:950px;
       position:relative;
     }
 
     .hero{
-      min-height:70vh;
+      min-height:78vh;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
       text-align:center;
-      gap:24px;
-      padding:40px 24px;
+      gap:10px;
+      padding:28px 24px 34px;
       border:1px solid var(--border);
       background:var(--card);
       backdrop-filter:blur(18px);
       border-radius:28px;
       box-shadow:var(--shadow);
       animation:fadeIn .9s ease;
+      overflow:hidden;
     }
 
     .logo-stage{
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:320px;
       width:100%;
-      transition:opacity 1.8s ease, transform 1.8s ease;
+      min-height:520px;
+      transition:opacity 2s ease, transform 2s ease;
     }
 
     .logo-stage.hide{
@@ -81,23 +81,24 @@
     }
 
     .logo{
-      max-width:520px;
-      max-height:320px;
       width:100%;
-      height:auto;
+      max-width:820px;
+      max-height:520px;
+      height:100%;
       object-fit:contain;
-      filter:drop-shadow(0 12px 28px rgba(0,0,0,.45));
+      filter:drop-shadow(0 18px 40px rgba(0,0,0,.45));
     }
 
     .fallback-logo{
-      width:260px;
-      height:260px;
+      width:100%;
+      max-width:520px;
+      height:320px;
       border-radius:24px;
       border:1px solid rgba(255,255,255,.15);
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:28px;
+      font-size:34px;
       font-weight:700;
       color:#fff;
       background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
@@ -109,6 +110,7 @@
       transform:translateY(18px);
       transition:opacity 1.4s ease, transform 1.4s ease;
       pointer-events:none;
+      margin-top:-10px;
     }
 
     .content.show{
@@ -179,22 +181,21 @@
 
     @media (max-width: 640px){
       .hero{
-        min-height:78vh;
-        padding:28px 18px;
+        min-height:82vh;
+        padding:20px 16px 28px;
       }
 
       .logo-stage{
-        min-height:240px;
+        min-height:340px;
       }
 
       .logo{
-        max-width:400px;
-        max-height:240px;
+        max-width:100%;
+        max-height:340px;
       }
 
       .fallback-logo{
-        width:200px;
-        height:200px;
+        height:220px;
         font-size:24px;
       }
 
@@ -257,7 +258,7 @@
 
       setTimeout(() => {
         content.classList.add('show');
-      }, 3600);
+      }, 3800);
     });
   </script>
 </body>
