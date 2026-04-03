@@ -89,6 +89,7 @@
       font-size: 12px;
       color: #c8d1dc;
       word-break: break-all;
+      line-height: 1.5;
     }
 
     .roles-box {
@@ -406,9 +407,10 @@
   </div>
 
   <script>
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
+    const WEB_APP_URL = 'INCOLLA_QUI_URL_WEB_APP_APPS_SCRIPT';
 
     let teamToken = '';
+    let teamCodeFromUrl = '';
     let teamInfo = null;
 
     const loadingBox = document.getElementById('loadingBox');
@@ -426,14 +428,21 @@
       statusBox.innerHTML = message;
     }
 
-    function getTokenFromUrl() {
+    function getUrlParams() {
       const params = new URLSearchParams(window.location.search);
-      return (
-        params.get('token_form') ||
-        params.get('token') ||
-        params.get('t') ||
-        ''
-      ).trim();
+      return {
+        team_code: (
+          params.get('team_code') ||
+          params.get('team') ||
+          ''
+        ).trim(),
+        token: (
+          params.get('token_form') ||
+          params.get('token') ||
+          params.get('t') ||
+          ''
+        ).trim()
+      };
     }
 
     async function postJson(payload) {
@@ -479,8 +488,20 @@
     }
 
     async function loadTeamInfo() {
-      teamToken = getTokenFromUrl();
-      debugToken.textContent = teamToken ? ('Token letto dal links: ' + teamToken) : 'Nessun token nel link';
+      const urlData = getUrlParams();
+      teamToken = urlData.token;
+      teamCodeFromUrl = urlData.team_code;
+
+      debugToken.innerHTML =
+        'Team letto dal link: ' + (teamCodeFromUrl || '(vuoto)') +
+        '<br>Token letto dal link: ' + (teamToken || '(vuoto)');
+
+      if (!teamCodeFromUrl) {
+        loadingBox.style.display = 'none';
+        teamNameEl.textContent = 'Team mancante';
+        showStatus('err', 'Nel link non è presente il parametro team oppure team_code.');
+        return;
+      }
 
       if (!teamToken) {
         loadingBox.style.display = 'none';
@@ -492,6 +513,7 @@
       try {
         const data = await postJson({
           action: 'getTeamInfo',
+          team_code: teamCodeFromUrl,
           token: teamToken,
           token_form: teamToken
         });
@@ -501,7 +523,7 @@
         }
 
         teamInfo = data;
-        teamNameEl.textContent = data.team_name || data.teamName || data.sheet_name || 'Squadra';
+        teamNameEl.textContent = data.team_name || data.teamName || data.sheet_name || teamCodeFromUrl;
         renderRoles(data.roles);
         loadingBox.style.display = 'none';
         form.style.display = 'block';
@@ -621,54 +643,3 @@
 
       try {
         const payload = {
-          action: 'submitRegistration',
-          token: teamToken,
-          token_form: teamToken,
-          team_code: teamInfo?.team_code || '',
-          team_name: teamInfo?.team_name || '',
-          today: formatTodayIT(),
-          nome: document.getElementById('nome').value.trim(),
-          cognome: document.getElementById('cognome').value.trim(),
-          nato_a: document.getElementById('natoA').value.trim(),
-          data_nascita: document.getElementById('dataNascita').value,
-          residente_in: document.getElementById('residenteIn').value.trim(),
-          provincia: document.getElementById('provincia').value.trim().toUpperCase(),
-          via: document.getElementById('via').value.trim(),
-          civico: document.getElementById('civico').value.trim(),
-          telefono: document.getElementById('telefono').value.trim(),
-          email: document.getElementById('email').value.trim(),
-          ruolo: document.getElementById('ruolo').value,
-          accettazione: document.getElementById('accettazione').checked,
-          firma_base64: signatureDataUrl,
-          documento_identita: {
-            name: docFile.name,
-            data: await fileToBase64(docFile)
-          },
-          visita_sportiva: {
-            name: visitaFile.name,
-            data: await fileToBase64(visitaFile)
-          }
-        };
-
-        const result = await postJson(payload);
-
-        if (!result.ok) {
-          throw new Error(result.error || 'Invio non riuscito');
-        }
-
-        form.reset();
-        document.getElementById('clearSignatureBtn').click();
-        showStatus('ok', 'Iscrizione inviata correttamente.');
-      } catch (err) {
-        showStatus('err', err.message || 'Errore durante l’invio');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Invia iscrizione';
-      }
-    });
-
-    setupSignatureCanvas();
-    loadTeamInfo();
-  </script>
-</body>
-</html>
