@@ -31,6 +31,15 @@
       color: var(--text);
     }
 
+    a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
     .wrap {
       width: 100%;
       max-width: 920px;
@@ -168,6 +177,14 @@
       margin-top: 3px;
       transform: scale(1.15);
       width: auto;
+      flex: 0 0 auto;
+    }
+
+    .check-text {
+      margin: 0;
+      font-weight: normal;
+      line-height: 1.6;
+      color: var(--text);
     }
 
     .sig-box {
@@ -287,7 +304,7 @@
       </div>
 
       <div class="body">
-        <div id="loadingBox" class="loader">Verifica token squadra in corso...</div>
+        <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
 
         <div id="rolesBox" class="roles-box">
           <div class="roles-title">Disponibilità ruoli</div>
@@ -368,11 +385,16 @@
             </div>
 
             <div class="field full">
-              <label>Check accettazione *</label>
+              <label>Accettazione documenti *</label>
               <div class="check-row">
                 <input type="checkbox" id="accettazione" required />
-                <label for="accettazione" style="margin:0; font-weight:normal; line-height:1.5;">
-                  Dichiaro che i dati inseriti sono corretti e autorizzo il trattamento dei dati.
+                <label for="accettazione" class="check-text">
+                  Dichiaro di aver letto e di accettare il
+                  <a href="#" target="_blank" rel="noopener noreferrer">regolamento</a>,
+                  la
+                  <a href="#" target="_blank" rel="noopener noreferrer">DICHIARAZIONE DI RESPONSABILITÀ</a>
+                  e i termini della
+                  <a href="#" target="_blank" rel="noopener noreferrer">liberatoria</a>.
                 </label>
               </div>
             </div>
