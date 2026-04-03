@@ -31,6 +31,15 @@
       color: var(--text);
     }
 
+    a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
     .wrap {
       width: 100%;
       max-width: 1280px;
@@ -187,6 +196,10 @@
       border: 1px solid rgba(255,107,107,0.25);
     }
 
+    .team-link {
+      font-weight: bold;
+    }
+
     .team-error {
       display: block;
       margin-top: 6px;
@@ -326,18 +339,33 @@
       return `<span class="badge ${cls}">${label}</span>`;
     }
 
+    function buildViewUrl(team) {
+      if (!team || !team.team_code || !team.token_view) return '';
+      return `view.html?team=${encodeURIComponent(team.team_code)}&token=${encodeURIComponent(team.token_view)}`;
+    }
+
+    function renderTeamCell(team) {
+      const teamName = escapeHtml(team.team_name || team.team_code || '');
+      const teamError = team.error
+        ? `<span class="team-error">${escapeHtml(team.error)}</span>`
+        : '';
+
+      const viewUrl = buildViewUrl(team);
+
+      if (viewUrl) {
+        return `<a class="team-link" href="${viewUrl}">${teamName}</a>${teamError}`;
+      }
+
+      return `${teamName}${teamError}`;
+    }
+
     function renderRows(teams) {
       rowsBody.innerHTML = '';
 
       teams.forEach(team => {
-        const teamName = escapeHtml(team.team_name || team.team_code || '');
-        const teamError = team.error
-          ? `<span class="team-error">${escapeHtml(team.error)}</span>`
-          : '';
-
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${teamName}${teamError}</td>
+          <td>${renderTeamCell(team)}</td>
           <td>${Number(team.total_iscritti || 0)}</td>
           <td>${Number(team.giocatori || 0)}</td>
           <td>${Number(team.allenatori || 0)}</td>
