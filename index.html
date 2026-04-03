@@ -6,19 +6,23 @@
   <title>Maratona Futsal Montaione 2026</title>
   <style>
     :root {
-      --bg: #0b0f14;
-      --panel: rgba(18, 24, 33, 0.92);
-      --panel-border: rgba(255, 255, 255, 0.08);
-      --text: #f3f6fb;
-      --muted: #a7b0bc;
+      --bg: #0a0e13;
+      --bg-2: #0f141b;
+      --panel: rgba(20, 27, 37, 0.72);
+      --panel-strong: rgba(20, 27, 37, 0.86);
+      --panel-border: rgba(255, 255, 255, 0.10);
+      --text: #f5f7fb;
+      --muted: #b5bec9;
       --accent: #f0c14b;
-      --accent-2: #ffdd78;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
-      --radius: 24px;
+      --accent-2: #ffde7d;
+      --accent-3: #dcae35;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+      --radius: 28px;
     }
 
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html, body {
@@ -26,8 +30,9 @@
       min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at top, rgba(240,193,75,0.12), transparent 30%),
-        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+        radial-gradient(circle at 50% 0%, rgba(240, 193, 75, 0.14), transparent 30%),
+        radial-gradient(circle at 20% 80%, rgba(240, 193, 75, 0.06), transparent 28%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
       color: var(--text);
       overflow: hidden;
     }
@@ -38,16 +43,26 @@
       align-items: center;
       justify-content: center;
       padding: 18px;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.02), transparent 45%);
+      pointer-events: none;
     }
 
     .stage {
       width: 100%;
-      max-width: 560px;
+      max-width: 620px;
+      min-height: 100vh;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 80vh;
     }
 
     .splash {
@@ -56,103 +71,173 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: splashFadeOut 1.1s ease forwards;
-      animation-delay: 1.7s;
-      z-index: 2;
+      z-index: 3;
       pointer-events: none;
+      animation: splashFadeOut 1.25s cubic-bezier(.22,.61,.36,1) forwards;
+      animation-delay: 1.8s;
+    }
+
+    .splash::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(240,193,75,0.10), transparent 38%);
+      opacity: 1;
+      animation: haloFadeOut 1.25s ease forwards;
+      animation-delay: 1.8s;
     }
 
     .splash img {
-      width: min(62vw, 260px);
-      max-width: 260px;
+      position: relative;
+      z-index: 1;
+      width: min(88vw, 460px);
+      max-width: 460px;
+      max-height: 76vh;
       aspect-ratio: 1 / 1;
       object-fit: contain;
-      border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-      animation: logoPulse 1.4s ease;
+      filter: drop-shadow(0 24px 50px rgba(0,0,0,0.48));
+      animation: logoIntro 1.45s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .content-wrap {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 0;
     }
 
     .card {
       width: 100%;
-      background: var(--panel);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+        var(--panel);
       border: 1px solid var(--panel-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       text-align: center;
-      padding: clamp(24px, 5vw, 38px);
+      padding: clamp(26px, 5vw, 40px);
       opacity: 0;
-      transform: translateY(16px);
-      animation: cardReveal 0.8s ease forwards;
-      animation-delay: 2.25s;
+      transform: translateY(28px) scale(0.98);
+      animation: cardReveal 0.9s cubic-bezier(.22,.61,.36,1) forwards;
+      animation-delay: 2.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.02) 28%,
+        transparent 55%
+      );
+      pointer-events: none;
+    }
+
+    .card-logo-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
     }
 
     .card-logo {
-      width: min(42vw, 150px);
+      width: min(38vw, 160px);
       aspect-ratio: 1 / 1;
-      margin: 0 auto 16px;
       display: block;
       object-fit: contain;
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.24);
+      filter: drop-shadow(0 14px 28px rgba(0,0,0,0.30));
     }
 
     h1 {
-      margin: 0 0 12px;
-      font-size: clamp(24px, 5.6vw, 34px);
-      line-height: 1.15;
+      margin: 0 0 10px;
+      font-size: clamp(28px, 6vw, 38px);
+      line-height: 1.08;
       color: #ffffff;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
     }
 
     .subtitle {
       margin: 0;
       color: var(--muted);
-      font-size: clamp(14px, 3.8vw, 16px);
-      line-height: 1.5;
+      font-size: clamp(14px, 3.8vw, 17px);
+      line-height: 1.55;
     }
 
     .actions {
-      margin-top: 28px;
+      margin-top: 30px;
       display: flex;
       justify-content: center;
     }
 
     .btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: min(100%, 320px);
-      min-height: 56px;
-      padding: 16px 22px;
-      border-radius: 16px;
-      border: 0;
+      width: min(100%, 340px);
+      min-height: 58px;
+      padding: 16px 24px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.20);
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 800;
       font-size: clamp(15px, 4vw, 17px);
-      color: #161616;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      box-shadow: 0 12px 28px rgba(240,193,75,0.22);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      letter-spacing: 0.01em;
+      color: #151515;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 55%, #fff1b3 100%);
+      box-shadow:
+        0 16px 34px rgba(240,193,75,0.24),
+        inset 0 1px 0 rgba(255,255,255,0.55);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease, filter 0.18s ease;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: 17px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.02));
+      pointer-events: none;
+      mix-blend-mode: screen;
     }
 
     .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 16px 32px rgba(240,193,75,0.28);
+      transform: translateY(-2px) scale(1.01);
+      box-shadow:
+        0 20px 38px rgba(240,193,75,0.30),
+        inset 0 1px 0 rgba(255,255,255,0.62);
+      filter: saturate(1.04);
     }
 
     .btn:active {
-      transform: translateY(0);
-      opacity: 0.96;
+      transform: translateY(0) scale(0.995);
+      opacity: 0.98;
     }
 
-    @keyframes logoPulse {
+    @keyframes logoIntro {
       0% {
         opacity: 0;
-        transform: scale(0.88);
+        transform: scale(0.78);
+        filter: blur(8px) drop-shadow(0 24px 50px rgba(0,0,0,0.40));
+      }
+      55% {
+        opacity: 1;
+        transform: scale(1.03);
+        filter: blur(0) drop-shadow(0 24px 50px rgba(0,0,0,0.48));
       }
       100% {
         opacity: 1;
         transform: scale(1);
+        filter: blur(0) drop-shadow(0 24px 50px rgba(0,0,0,0.48));
       }
     }
 
@@ -160,45 +245,89 @@
       0% {
         opacity: 1;
         transform: scale(1);
+        visibility: visible;
       }
       100% {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(1.08);
         visibility: hidden;
+      }
+    }
+
+    @keyframes haloFadeOut {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
       }
     }
 
     @keyframes cardReveal {
       0% {
         opacity: 0;
-        transform: translateY(16px);
+        transform: translateY(28px) scale(0.98);
       }
       100% {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 640px) {
       body {
         padding: 14px;
       }
 
-      .card {
-        border-radius: 22px;
-        padding: 22px 18px 24px;
+      .stage {
+        max-width: 100%;
       }
 
       .splash img {
-        width: min(68vw, 220px);
+        width: min(96vw, 420px);
+        max-height: 78vh;
+      }
+
+      .card {
+        padding: 24px 18px 24px;
+        border-radius: 24px;
       }
 
       .card-logo {
-        width: min(44vw, 130px);
+        width: min(42vw, 145px);
+      }
+
+      .actions {
+        margin-top: 26px;
       }
 
       .btn {
         width: 100%;
+        min-height: 56px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .splash img {
+        width: min(100vw, 380px);
+      }
+
+      h1 {
+        font-size: clamp(26px, 7vw, 34px);
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .card-logo {
+        width: min(46vw, 138px);
+      }
+    }
+
+    @media (min-width: 900px) {
+      .splash img {
+        width: min(46vw, 420px);
       }
     }
   </style>
@@ -209,16 +338,20 @@
       <img src="logomar.jpeg" alt="Logo Maratona Futsal Montaione 2026">
     </div>
 
-    <section class="card">
-      <img class="card-logo" src="logomar.jpeg" alt="Logo Maratona Futsal Montaione 2026">
+    <div class="content-wrap">
+      <section class="card">
+        <div class="card-logo-wrap">
+          <img class="card-logo" src="logomar.jpeg" alt="Logo Maratona Futsal Montaione 2026">
+        </div>
 
-      <h1>Maratona Futsal Montaione 2026</h1>
-      <p class="subtitle">Portale iscrizioni ufficiale</p>
+        <h1>Maratona Futsal Montaione 2026</h1>
+        <p class="subtitle">Portale iscrizioni ufficiale</p>
 
-      <div class="actions">
-        <a id="startBtn" class="btn" href="form.html">Modulo Iscrizione 2026</a>
-      </div>
-    </section>
+        <div class="actions">
+          <a id="startBtn" class="btn" href="form.html">Modulo Iscrizione 2026</a>
+        </div>
+      </section>
+    </div>
   </main>
 
   <script>
