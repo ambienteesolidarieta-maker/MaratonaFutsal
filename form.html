@@ -22,13 +22,21 @@
 
     * { box-sizing: border-box; }
 
-    body {
+    html, body {
       margin: 0;
+      min-height: 100%;
+    }
+
+    body {
       font-family: Arial, Helvetica, sans-serif;
       background:
         radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
         linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
       color: var(--text);
+    }
+
+    body.is-busy {
+      overflow: hidden;
     }
 
     a {
@@ -157,6 +165,10 @@
       box-shadow: 0 0 0 3px rgba(240,193,75,0.12);
     }
 
+    .field input[type="file"] {
+      padding: 12px;
+    }
+
     .hint {
       margin-top: 6px;
       font-size: 12px;
@@ -201,6 +213,8 @@
       background: #fff;
       cursor: crosshair;
       touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .sig-actions {
@@ -219,6 +233,17 @@
       cursor: pointer;
       font-weight: bold;
       font-size: 14px;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .btn-primary {
@@ -276,6 +301,107 @@
       font-size: 14px;
     }
 
+    .busy-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 12, 17, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .busy-overlay.show {
+      display: flex;
+    }
+
+    .busy-card {
+      width: 100%;
+      max-width: 360px;
+      background: rgba(18,24,33,0.96);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.12);
+      border-top-color: var(--accent);
+      animation: spin .9s linear infinite;
+    }
+
+    .busy-title {
+      font-size: 17px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .busy-text {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .success-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(18,24,33,0.96);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: rgba(55,214,122,0.16);
+      border: 1px solid rgba(55,214,122,0.30);
+      color: #baf3cf;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: bold;
+    }
+
+    .success-title {
+      margin: 0 0 10px;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .success-text {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 700px) {
       .grid {
         grid-template-columns: 1fr;
@@ -300,7 +426,7 @@
     <div class="card">
       <div class="hero">
         <img src="logomar.jpeg" alt="Logo" />
-        <h1>Modulo Iscrizione Maratona Futsal Montaione 20266</h1>
+        <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
         <div id="teamName" class="team-name">Caricamento squadra...</div>
         <div class="sub">Compila tutti i campi richiesti</div>
       </div>
@@ -422,6 +548,14 @@
     </div>
   </div>
 
+  <div id="busyOverlay" class="busy-overlay" aria-hidden="true">
+    <div class="busy-card">
+      <div class="spinner"></div>
+      <div class="busy-title">Invio in corso</div>
+      <div class="busy-text">Attendi qualche secondo. Stiamo caricando documenti, firma e modulo.</div>
+    </div>
+  </div>
+
   <script>
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
 
@@ -437,10 +571,51 @@
     const rolesBox = document.getElementById('rolesBox');
     const rolesList = document.getElementById('rolesList');
     const ruoloSelect = document.getElementById('ruolo');
+    const busyOverlay = document.getElementById('busyOverlay');
 
     function showStatus(type, message) {
       statusBox.className = 'status ' + type;
       statusBox.innerHTML = message;
+    }
+
+    function setBusy(isBusy) {
+      busyOverlay.classList.toggle('show', isBusy);
+      document.body.classList.toggle('is-busy', isBusy);
+      submitBtn.disabled = isBusy;
+
+      const controls = form.querySelectorAll('input, select, button, textarea');
+      controls.forEach(el => {
+        if (isBusy) {
+          el.setAttribute('disabled', 'disabled');
+        } else {
+          if (el.id !== 'submitBtn') el.removeAttribute('disabled');
+        }
+      });
+
+      if (!isBusy) {
+        submitBtn.disabled = false;
+      }
+    }
+
+    function showSuccessAndClose() {
+      document.body.innerHTML = `
+        <div class="success-screen">
+          <div class="success-card">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">Invio completato</h2>
+            <p class="success-text">
+              La richiesta è stata inviata correttamente.<br>
+              Puoi chiudere questa pagina.
+            </p>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        try {
+          window.close();
+        } catch (_) {}
+      }, 800);
     }
 
     function getUrlParams() {
@@ -462,7 +637,7 @@
 
     async function postJson(payload) {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
+      const timeout = setTimeout(() => controller.abort(), 25000);
 
       try {
         const res = await fetch(WEB_APP_URL, {
@@ -560,13 +735,15 @@
 
     function setupSignatureCanvas() {
       const canvas = document.getElementById('signatureCanvas');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
       let drawing = false;
       let hasSignature = false;
+      let lastX = 0;
+      let lastY = 0;
 
       function initContext() {
-        ctx.lineWidth = 2.4;
+        ctx.lineWidth = 2.6;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.strokeStyle = '#111';
@@ -576,70 +753,124 @@
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         const rect = canvas.getBoundingClientRect();
 
-        canvas.width = Math.floor(rect.width * ratio);
-        canvas.height = Math.floor(rect.height * ratio);
+        canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+        canvas.height = Math.max(1, Math.floor(rect.height * ratio));
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(ratio, ratio);
         initContext();
       }
 
-      function getPos(e) {
+      function getPoint(evt) {
         const rect = canvas.getBoundingClientRect();
+        let clientX = 0;
+        let clientY = 0;
+
+        if (evt.touches && evt.touches.length) {
+          clientX = evt.touches[0].clientX;
+          clientY = evt.touches[0].clientY;
+        } else if (evt.changedTouches && evt.changedTouches.length) {
+          clientX = evt.changedTouches[0].clientX;
+          clientY = evt.changedTouches[0].clientY;
+        } else {
+          clientX = evt.clientX;
+          clientY = evt.clientY;
+        }
+
         return {
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
+          x: clientX - rect.left,
+          y: clientY - rect.top
         };
       }
 
-      function startDraw(e) {
+      function beginStroke(x, y) {
         drawing = true;
         hasSignature = true;
-
-        const pos = getPos(e);
+        lastX = x;
+        lastY = y;
         ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y);
-
-        if (canvas.setPointerCapture && e.pointerId != null) {
-          canvas.setPointerCapture(e.pointerId);
-        }
-
-        e.preventDefault();
-      }
-
-      function moveDraw(e) {
-        if (!drawing) return;
-
-        const pos = getPos(e);
-        ctx.lineTo(pos.x, pos.y);
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + 0.01, y + 0.01);
         ctx.stroke();
-
-        e.preventDefault();
       }
 
-      function endDraw(e) {
-        drawing = false;
+      function continueStroke(x, y) {
+        if (!drawing) return;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        lastX = x;
+        lastY = y;
+      }
 
-        if (canvas.releasePointerCapture && e.pointerId != null) {
-          try {
-            canvas.releasePointerCapture(e.pointerId);
-          } catch (_) {}
-        }
+      function endStroke() {
+        drawing = false;
       }
 
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
 
-      canvas.addEventListener('pointerdown', startDraw);
-      canvas.addEventListener('pointermove', moveDraw);
-      canvas.addEventListener('pointerup', endDraw);
-      canvas.addEventListener('pointercancel', endDraw);
-      canvas.addEventListener('pointerleave', endDraw);
+      canvas.addEventListener('pointerdown', (e) => {
+        const p = getPoint(e);
+        beginStroke(p.x, p.y);
+        if (canvas.setPointerCapture && e.pointerId != null) {
+          try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        e.preventDefault();
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        const p = getPoint(e);
+        continueStroke(p.x, p.y);
+        if (drawing) e.preventDefault();
+      });
+
+      canvas.addEventListener('pointerup', (e) => {
+        endStroke();
+        if (canvas.releasePointerCapture && e.pointerId != null) {
+          try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+      });
+
+      canvas.addEventListener('pointercancel', endStroke);
+      canvas.addEventListener('mouseleave', endStroke);
+
+      canvas.addEventListener('mousedown', (e) => {
+        const p = getPoint(e);
+        beginStroke(p.x, p.y);
+        e.preventDefault();
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        const p = getPoint(e);
+        continueStroke(p.x, p.y);
+      });
+
+      window.addEventListener('mouseup', endStroke);
+
+      canvas.addEventListener('touchstart', (e) => {
+        const p = getPoint(e);
+        beginStroke(p.x, p.y);
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener('touchmove', (e) => {
+        const p = getPoint(e);
+        continueStroke(p.x, p.y);
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener('touchend', (e) => {
+        endStroke();
+        e.preventDefault();
+      }, { passive: false });
 
       document.getElementById('clearSignatureBtn').addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         initContext();
         hasSignature = false;
+        drawing = false;
       });
 
       window.getSignatureDataUrl = function () {
@@ -674,9 +905,6 @@
         return;
       }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Invio in corso...';
-
       try {
         const docInput = document.getElementById('docIdentita');
         const visitaInput = document.getElementById('visitaSportiva');
@@ -687,6 +915,8 @@
         if (!docFile || !visitaFile) {
           throw new Error('Carica entrambi gli allegati.');
         }
+
+        setBusy(true);
 
         const payload = {
           action: 'submitRegistration',
@@ -724,14 +954,10 @@
           throw new Error(result.error || 'Invio non riuscito');
         }
 
-        form.reset();
-        document.getElementById('clearSignatureBtn').click();
-        showStatus('ok', 'Iscrizione inviata correttamente.');
+        showSuccessAndClose();
       } catch (err) {
+        setBusy(false);
         showStatus('err', err.message || 'Errore durante l’invio');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Invia iscrizione';
       }
     });
 
