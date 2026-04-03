@@ -84,14 +84,6 @@
       font-size: 14px;
     }
 
-    .debug-token {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #c8d1dc;
-      word-break: break-all;
-      line-height: 1.5;
-    }
-
     .roles-box {
       margin-top: 16px;
       padding: 14px;
@@ -147,7 +139,7 @@
       background: var(--panel-2);
       color: white;
       outline: none;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .field input:focus,
@@ -175,6 +167,7 @@
     .check-row input[type="checkbox"] {
       margin-top: 3px;
       transform: scale(1.15);
+      width: auto;
     }
 
     .sig-box {
@@ -188,9 +181,9 @@
       display: block;
       width: 100%;
       height: 220px;
-      touch-action: none;
       background: #fff;
       cursor: crosshair;
+      touch-action: none;
     }
 
     .sig-actions {
@@ -290,8 +283,7 @@
         <img src="logomar.jpeg" alt="Logo" />
         <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
         <div id="teamName" class="team-name">Caricamento squadra...</div>
-        <div class="sub">Compila tutti i campi richiestis</div>
-        <div id="debugToken" class="debug-token"></div>
+        <div class="sub">Compila tutti i campi richiesti</div>
       </div>
 
       <div class="body">
@@ -418,7 +410,6 @@
     const teamNameEl = document.getElementById('teamName');
     const statusBox = document.getElementById('statusBox');
     const submitBtn = document.getElementById('submitBtn');
-    const debugToken = document.getElementById('debugToken');
     const rolesBox = document.getElementById('rolesBox');
     const rolesList = document.getElementById('rolesList');
     const ruoloSelect = document.getElementById('ruolo');
@@ -464,11 +455,11 @@
         try {
           return JSON.parse(text);
         } catch (e) {
-          throw new Error('Risposta backend non valida: ' + text);
+          throw new Error('Risposta backend non valida');
         }
       } catch (err) {
         if (err.name === 'AbortError') {
-          throw new Error('Timeout chiamata backend. Verifica URL Apps Script o permessi Web App.');
+          throw new Error('Timeout chiamata backend');
         }
         throw err;
       } finally {
@@ -505,21 +496,16 @@
       teamToken = urlData.token;
       teamCodeFromUrl = urlData.team_code;
 
-      debugToken.innerHTML =
-        'Team letto dal link: ' + (teamCodeFromUrl || '(vuoto)') +
-        '<br>Token letto dal link: ' + (teamToken || '(vuoto)') +
-        '<br>Backend: ' + WEB_APP_URL;
-
       if (!teamCodeFromUrl) {
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Team mancante';
-        showStatus('err', 'Nel link non è presente il parametro team oppure team_code.');
+        showStatus('err', 'Nel link non è presente il parametro team.');
         return;
       }
 
       if (!teamToken) {
         loadingBox.style.display = 'none';
-        teamNameEl.textContent = 'Token squadra mancante';
+        teamNameEl.textContent = 'Token mancante';
         showStatus('err', 'Nel link non è presente il token.');
         return;
       }
@@ -533,11 +519,11 @@
         });
 
         if (!data.ok) {
-          throw new Error(data.error || 'Squadra mancante');
+          throw new Error(data.error || 'Squadra non trovata');
         }
 
         teamInfo = data;
-        teamNameEl.textContent = data.team_name || data.teamName || data.sheet_name || teamCodeFromUrl;
+        teamNameEl.textContent = data.team_name || data.sheet_name || teamCodeFromUrl;
         renderRoles(data.roles);
         loadingBox.style.display = 'none';
         form.style.display = 'block';
@@ -567,6 +553,7 @@
       }
 
       resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
 
       function getPos(e) {
         const rect = canvas.getBoundingClientRect();
@@ -577,35 +564,43 @@
         };
       }
 
-      function start(e) {
+      function startDraw(e) {
         drawing = true;
         hasSignature = true;
         const pos = getPos(e);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
-        e.preventDefault();
       }
 
-      function move(e) {
+      function moveDraw(e) {
         if (!drawing) return;
         const pos = getPos(e);
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
-        e.preventDefault();
       }
 
-      function end(e) {
+      function endDraw() {
         drawing = false;
-        e.preventDefault();
       }
 
-      canvas.addEventListener('mousedown', start);
-      canvas.addEventListener('mousemove', move);
-      window.addEventListener('mouseup', end);
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', moveDraw);
+      canvas.addEventListener('mouseup', endDraw);
+      canvas.addEventListener('mouseleave', endDraw);
 
-      canvas.addEventListener('touchstart', start, { passive: false });
-      canvas.addEventListener('touchmove', move, { passive: false });
-      window.addEventListener('touchend', end, { passive: false });
+      canvas.addEventListener('touchstart', function(e) {
+        startDraw(e);
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener('touchmove', function(e) {
+        moveDraw(e);
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener('touchend', function() {
+        endDraw();
+      });
 
       document.getElementById('clearSignatureBtn').addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
