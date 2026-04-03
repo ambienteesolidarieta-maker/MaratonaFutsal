@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modulo Iscrizione 2026</title>
+  <style>
+    :root{
+      --bg:#050816;
+      --bg2:#0b1223;
+      --card:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.10);
+      --text:#f8fafc;
+      --muted:#94a3b8;
+      --accent:#ffffff;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      width:100%;
+      min-height:100%;
+      font-family:Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, #16213b 0%, transparent 35%),
+        radial-gradient(circle at bottom right, #0f172a 0%, transparent 30%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:900px;
+      position:relative;
+    }
+
+    .hero{
+      min-height:70vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:24px;
+      padding:40px 24px;
+      border:1px solid var(--border);
+      background:var(--card);
+      backdrop-filter: blur(18px);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      animation:fadeIn .9s ease;
+    }
+
+    .logo-stage{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:220px;
+      transition:opacity 1.1s ease, transform 1.1s ease;
+    }
+
+    .logo-stage.hide{
+      opacity:0;
+      transform:translateY(-12px) scale(.97);
+      pointer-events:none;
+    }
+
+    .logo{
+      max-width:300px;
+      max-height:220px;
+      width:auto;
+      height:auto;
+      object-fit:contain;
+      filter:drop-shadow(0 12px 28px rgba(0,0,0,.45));
+    }
+
+    .fallback-logo{
+      width:220px;
+      height:220px;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.15);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:700;
+      color:#fff;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+      box-shadow:0 18px 40px rgba(0,0,0,.35);
+    }
+
+    .content{
+      opacity:0;
+      transform:translateY(18px);
+      transition:opacity 1s ease, transform 1s ease;
+      pointer-events:none;
+    }
+
+    .content.show{
+      opacity:1;
+      transform:translateY(0);
+      pointer-events:auto;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(30px, 5vw, 54px);
+      line-height:1.05;
+      letter-spacing:-0.03em;
+    }
+
+    p{
+      margin:0 auto 28px;
+      max-width:680px;
+      font-size:clamp(15px, 2vw, 18px);
+      line-height:1.6;
+      color:var(--muted);
+    }
+
+    .cta{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:250px;
+      min-height:58px;
+      padding:0 28px;
+      border:none;
+      border-radius:999px;
+      background:#fff;
+      color:#0f172a;
+      font-size:18px;
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+      box-shadow:0 12px 30px rgba(255,255,255,.15);
+      transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+
+    .cta:hover{
+      transform:translateY(-2px);
+      box-shadow:0 16px 34px rgba(255,255,255,.20);
+    }
+
+    .cta:active{
+      transform:translateY(0);
+    }
+
+    .mini{
+      margin-top:14px;
+      font-size:13px;
+      color:#64748b;
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(18px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div id="logoStage" class="logo-stage">
+        <!-- SOSTITUISCI LOGO_URL con il link diretto del file immagine -->
+        <img
+          id="logoImg"
+          class="logo"
+          src="LOGO_URL"
+          alt="Logo"
+          onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';"
+        />
+        <div id="fallbackLogo" class="fallback-logo" style="display:none;">
+          LOGO
+        </div>
+      </div>
+
+      <div id="content" class="content">
+        <h1>Modulo Iscrizione 2026</h1>
+        <p>
+          Accesso al portale di iscrizione. Procedi con la compilazione del modulo,
+          allega i documenti richiesti e completa la firma grafica finale.
+        </p>
+
+        <a id="goForm" class="cta" href="form.html">
+          Modulo Iscrizione 2026
+        </a>
+
+        <div class="mini">Compilazione semplice da smartphone e desktop</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const team = params.get('team');
+    const token = params.get('token');
+
+    const goForm = document.getElementById('goForm');
+    if (team && token) {
+      goForm.href = `form.html?team=${encodeURIComponent(team)}&token=${encodeURIComponent(token)}`;
+    }
+
+    window.addEventListener('load', () => {
+      const logoStage = document.getElementById('logoStage');
+      const content = document.getElementById('content');
+
+      setTimeout(() => {
+        logoStage.classList.add('hide');
+      }, 1800);
+
+      setTimeout(() => {
+        content.classList.add('show');
+      }, 2400);
+    });
+  </script>
+</body>
+</html>
