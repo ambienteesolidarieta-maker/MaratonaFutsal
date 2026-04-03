@@ -165,6 +165,35 @@
       border-bottom: 0;
     }
 
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .badge.ok {
+      background: rgba(55,214,122,0.12);
+      color: #baf3cf;
+      border: 1px solid rgba(55,214,122,0.25);
+    }
+
+    .badge.full {
+      background: rgba(255,107,107,0.12);
+      color: #ffd1d1;
+      border: 1px solid rgba(255,107,107,0.25);
+    }
+
+    .team-error {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #ffb3b3;
+    }
+
     @media (max-width: 900px) {
       .summary-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -278,24 +307,44 @@
       }
     }
 
-    function yesNo(value) {
-      return value ? 'Completo' : 'Disponibile';
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function availabilityLabel(isAvailable) {
+      return isAvailable ? 'Disponibile' : 'Completo';
+    }
+
+    function availabilityBadge(isAvailable) {
+      const label = availabilityLabel(isAvailable);
+      const cls = isAvailable ? 'ok' : 'full';
+      return `<span class="badge ${cls}">${label}</span>`;
     }
 
     function renderRows(teams) {
       rowsBody.innerHTML = '';
 
       teams.forEach(team => {
+        const teamName = escapeHtml(team.team_name || team.team_code || '');
+        const teamError = team.error
+          ? `<span class="team-error">${escapeHtml(team.error)}</span>`
+          : '';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${team.team_name || team.team_code || ''}</td>
-          <td>${team.total_iscritti ?? 0}</td>
-          <td>${team.giocatori ?? 0}</td>
-          <td>${team.allenatori ?? 0}</td>
-          <td>${team.dirigenti ?? 0}</td>
-          <td>${team.giocatori_disponibili ?? 0}</td>
-          <td>${yesNo(!(team.allenatore_disponibile))}</td>
-          <td>${yesNo(!(team.dirigente_disponibile))}</td>
+          <td>${teamName}${teamError}</td>
+          <td>${Number(team.total_iscritti || 0)}</td>
+          <td>${Number(team.giocatori || 0)}</td>
+          <td>${Number(team.allenatori || 0)}</td>
+          <td>${Number(team.dirigenti || 0)}</td>
+          <td>${Number(team.giocatori_disponibili || 0)}</td>
+          <td>${availabilityBadge(team.allenatore_disponibile === true)}</td>
+          <td>${availabilityBadge(team.dirigente_disponibile === true)}</td>
         `;
         rowsBody.appendChild(tr);
       });
@@ -327,11 +376,11 @@
         let totalAllenatori = 0;
         let totalDirigenti = 0;
 
-        teams.forEach(t => {
-          totalIscritti += Number(t.total_iscritti || 0);
-          totalGiocatori += Number(t.giocatori || 0);
-          totalAllenatori += Number(t.allenatori || 0);
-          totalDirigenti += Number(t.dirigenti || 0);
+        teams.forEach(team => {
+          totalIscritti += Number(team.total_iscritti || 0);
+          totalGiocatori += Number(team.giocatori || 0);
+          totalAllenatori += Number(team.allenatori || 0);
+          totalDirigenti += Number(team.dirigenti || 0);
         });
 
         document.getElementById('totTeams').textContent = teams.length;
