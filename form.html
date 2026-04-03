@@ -91,6 +91,30 @@
       word-break: break-all;
     }
 
+    .roles-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      display: none;
+    }
+
+    .roles-title {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #dce3ed;
+    }
+
+    .roles-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
     .body {
       padding: 22px;
     }
@@ -125,6 +149,18 @@
       font-size: 15px;
     }
 
+    .field input:focus,
+    .field select:focus {
+      border-color: rgba(240,193,75,0.55);
+      box-shadow: 0 0 0 3px rgba(240,193,75,0.12);
+    }
+
+    .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     .check-row {
       display: flex;
       align-items: flex-start;
@@ -133,6 +169,11 @@
       border-radius: 14px;
       background: var(--panel-2);
       border: 1px solid var(--line);
+    }
+
+    .check-row input[type="checkbox"] {
+      margin-top: 3px;
+      transform: scale(1.15);
     }
 
     .sig-box {
@@ -255,6 +296,11 @@
       <div class="body">
         <div id="loadingBox" class="loader">Verifica token squadra in corso...</div>
 
+        <div id="rolesBox" class="roles-box">
+          <div class="roles-title">Disponibilità ruoli</div>
+          <div id="rolesList" class="roles-list"></div>
+        </div>
+
         <form id="registrationForm" style="display:none;">
           <div class="grid">
             <div class="field">
@@ -315,15 +361,16 @@
                 <option value="Allenatore">Allenatore</option>
                 <option value="Dirigente">Dirigente</option>
               </select>
+              <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
             </div>
 
             <div class="field full">
-              <label>Foto documento identità *</label>
+              <label for="docIdentita">Foto documento identità *</label>
               <input type="file" id="docIdentita" accept="image/*" required />
             </div>
 
             <div class="field full">
-              <label>Foto visita sportiva *</label>
+              <label for="visitaSportiva">Foto visita sportiva *</label>
               <input type="file" id="visitaSportiva" accept="image/*" required />
             </div>
 
@@ -359,7 +406,7 @@
   </div>
 
   <script>
-    const WEB_APP_URL = 'INCOLLA_QUI_URL_WEB_APP_APPS_SCRIPT';
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
 
     let teamToken = '';
     let teamInfo = null;
@@ -370,6 +417,9 @@
     const statusBox = document.getElementById('statusBox');
     const submitBtn = document.getElementById('submitBtn');
     const debugToken = document.getElementById('debugToken');
+    const rolesBox = document.getElementById('rolesBox');
+    const rolesList = document.getElementById('rolesList');
+    const ruoloSelect = document.getElementById('ruolo');
 
     function showStatus(type, message) {
       statusBox.className = 'status ' + type;
@@ -404,6 +454,30 @@
       }
     }
 
+    function renderRoles(roles) {
+      if (!roles) return;
+
+      const items = ['Giocatore', 'Allenatore', 'Dirigente'];
+      rolesList.innerHTML = '';
+
+      items.forEach(role => {
+        const info = roles[role];
+        if (!info) return;
+
+        const row = document.createElement('div');
+        row.textContent = `${role}: ${info.current}/${info.max}` + (info.available ? '' : ' - COMPLETO');
+        rolesList.appendChild(row);
+      });
+
+      Array.from(ruoloSelect.options).forEach(opt => {
+        if (!opt.value) return;
+        const info = roles[opt.value];
+        opt.disabled = info ? !info.available : false;
+      });
+
+      rolesBox.style.display = 'block';
+    }
+
     async function loadTeamInfo() {
       teamToken = getTokenFromUrl();
       debugToken.textContent = teamToken ? ('Token letto dal link: ' + teamToken) : 'Nessun token nel link';
@@ -428,6 +502,7 @@
 
         teamInfo = data;
         teamNameEl.textContent = data.team_name || data.teamName || data.sheet_name || 'Squadra';
+        renderRoles(data.roles);
         loadingBox.style.display = 'none';
         form.style.display = 'block';
       } catch (err) {
@@ -525,6 +600,7 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      statusBox.style.display = 'none';
 
       const signatureDataUrl = window.getSignatureDataUrl();
       if (!signatureDataUrl) {
