@@ -1,269 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modulo Iscrizione 2026</title>
+  <title>Maratona Futsal Montaione 2026</title>
   <style>
-    :root{
-      --bg:#050816;
-      --bg2:#0b1223;
-      --card:rgba(255,255,255,.06);
-      --border:rgba(255,255,255,.10);
-      --text:#f8fafc;
-      --muted:#94a3b8;
-      --shadow:0 20px 60px rgba(0,0,0,.45);
+    :root {
+      --bg: #0b0f14;
+      --panel: rgba(18, 24, 33, 0.92);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: #f3f6fb;
+      --muted: #a7b0bc;
+      --accent: #f0c14b;
+      --accent-2: #ffdd78;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+      --radius: 24px;
     }
 
-    *{
-      box-sizing:border-box;
+    * {
+      box-sizing: border-box;
     }
 
-    html,body{
-      margin:0;
-      padding:0;
-      width:100%;
-      min-height:100%;
-      font-family:Arial, Helvetica, sans-serif;
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at top, #16213b 0%, transparent 35%),
-        radial-gradient(circle at bottom right, #0f172a 0%, transparent 30%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-      color:var(--text);
-      overflow:hidden;
+        radial-gradient(circle at top, rgba(240,193,75,0.12), transparent 30%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+      color: var(--text);
     }
 
-    body{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
     }
 
-    .wrap{
-      width:100%;
-      max-width:920px;
+    .shell {
+      width: 100%;
+      max-width: 520px;
     }
 
-    .hero{
-      position:relative;
-      width:100%;
-      height:78vh;
-      min-height:620px;
-      border:1px solid var(--border);
-      background:var(--card);
-      backdrop-filter:blur(18px);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      animation:fadeIn .9s ease;
+    .card {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: clamp(24px, 5vw, 38px);
     }
 
-    .logo-stage,
-    .content{
-      position:absolute;
-      inset:0;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:36px;
+    .logo-box {
+      width: min(56vw, 210px);
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
-    .logo-stage{
-      opacity:1;
-      transform:scale(1);
-      transition:opacity 2s ease, transform 2s ease;
-      z-index:2;
+    .logo-box img {
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+      display: block;
+      border-radius: 16px;
     }
 
-    .logo-stage.hide{
-      opacity:0;
-      transform:scale(.96);
-      pointer-events:none;
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 5.6vw, 34px);
+      line-height: 1.15;
+      color: #ffffff;
     }
 
-    .logo{
-      width:100%;
-      height:100%;
-      max-width:88%;
-      max-height:88%;
-      object-fit:contain;
-      filter:drop-shadow(0 18px 40px rgba(0,0,0,.45));
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(14px, 3.8vw, 16px);
+      line-height: 1.5;
     }
 
-    .fallback-logo{
-      width:70%;
-      height:70%;
-      border-radius:24px;
-      border:1px solid rgba(255,255,255,.15);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:34px;
-      font-weight:700;
-      color:#fff;
-      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
-      box-shadow:0 18px 40px rgba(0,0,0,.35);
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
     }
 
-    .content{
-      opacity:0;
-      transform:translateY(20px);
-      transition:opacity 1.4s ease, transform 1.4s ease;
-      pointer-events:none;
-      z-index:1;
-      gap:16px;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: min(100%, 320px);
+      min-height: 56px;
+      padding: 16px 22px;
+      border-radius: 16px;
+      border: 0;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: clamp(15px, 4vw, 17px);
+      color: #161616;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 28px rgba(240,193,75,0.22);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     }
 
-    .content.show{
-      opacity:1;
-      transform:translateY(0);
-      pointer-events:auto;
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 32px rgba(240,193,75,0.28);
     }
 
-    h1{
-      margin:0;
-      font-size:clamp(32px, 5vw, 58px);
-      line-height:1.05;
-      letter-spacing:-0.03em;
+    .btn:active {
+      transform: translateY(0);
+      opacity: 0.96;
     }
 
-    p{
-      margin:0;
-      max-width:700px;
-      font-size:clamp(15px, 2vw, 18px);
-      line-height:1.6;
-      color:var(--muted);
+    .footer-note {
+      margin-top: 18px;
+      color: #7f8996;
+      font-size: 12px;
+      line-height: 1.4;
     }
 
-    .cta{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:260px;
-      min-height:60px;
-      padding:0 30px;
-      margin-top:8px;
-      border:none;
-      border-radius:999px;
-      background:#fff;
-      color:#0f172a;
-      font-size:18px;
-      font-weight:700;
-      text-decoration:none;
-      cursor:pointer;
-      box-shadow:0 12px 30px rgba(255,255,255,.15);
-      transition:transform .18s ease, box-shadow .18s ease;
-    }
-
-    .cta:hover{
-      transform:translateY(-2px);
-      box-shadow:0 16px 34px rgba(255,255,255,.20);
-    }
-
-    .mini{
-      font-size:13px;
-      color:#64748b;
-      margin-top:2px;
-    }
-
-    @keyframes fadeIn{
-      from{
-        opacity:0;
-        transform:translateY(18px);
+    @media (max-width: 480px) {
+      body {
+        padding: 14px;
+        align-items: center;
       }
-      to{
-        opacity:1;
-        transform:translateY(0);
+
+      .card {
+        border-radius: 22px;
+        padding: 22px 18px 24px;
+      }
+
+      .logo-box {
+        width: min(62vw, 190px);
+        border-radius: 20px;
+        margin-bottom: 16px;
+      }
+
+      .btn {
+        width: 100%;
       }
     }
 
-    @media (max-width: 640px){
-      .hero{
-        height:82vh;
-        min-height:520px;
+    @media (min-width: 900px) {
+      .shell {
+        max-width: 560px;
       }
 
-      .logo-stage,
-      .content{
-        padding:22px;
-      }
-
-      .logo{
-        max-width:94%;
-        max-height:94%;
-      }
-
-      .fallback-logo{
-        width:82%;
-        height:50%;
-        font-size:24px;
-      }
-
-      .cta{
-        width:100%;
-        max-width:320px;
+      .logo-box {
+        width: 220px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <div id="logoStage" class="logo-stage">
-        <img
-          id="logoImg"
-          class="logo"
-          src="logomar.jpeg"
-          alt="Logo"
-          onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';"
-        />
-        <div id="fallbackLogo" class="fallback-logo" style="display:none;">
-          LOGO
-        </div>
+  <main class="shell">
+    <section class="card">
+      <div class="logo-box">
+        <img src="logomar.jpeg" alt="Logo Maratona Futsal Montaione 2026">
       </div>
 
-      <div id="content" class="content">
-        <h1>Modulo Iscrizione 2026</h1>
-        <p>
-          Accesso al portale di iscrizione. Procedi con la compilazione del modulo,
-          allega i documenti richiesti e completa la firma grafica finale.
-        </p>
+      <h1>Maratona Futsal Montaione 2026</h1>
+      <p class="subtitle">
+        Portale iscrizioni ufficiale
+      </p>
 
-        <a id="goForm" class="cta" href="form.html">
-          Modulo Iscrizione 2026
-        </a>
+      <div class="actions">
+        <a class="btn" href="form.html">Modulo Iscrizione 2026</a>
+      </div>
 
-        <div class="mini">Compilazione semplice da smartphone e desktop</div>
+      <div class="footer-note">
+        Accedi al modulo tramite il link ricevuto dalla tua squadra.
       </div>
     </section>
-  </div>
-
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const team = params.get('team');
-    const token = params.get('token');
-
-    const goForm = document.getElementById('goForm');
-    if (team && token) {
-      goForm.href = `form.html?team=${encodeURIComponent(team)}&token=${encodeURIComponent(token)}`;
-    }
-
-    window.addEventListener('load', () => {
-      const logoStage = document.getElementById('logoStage');
-      const content = document.getElementById('content');
-
-      setTimeout(() => {
-        logoStage.classList.add('hide');
-      }, 2600);
-
-      setTimeout(() => {
-        content.classList.add('show');
-      }, 3800);
-    });
-  </script>
+  </main>
 </body>
 </html>
