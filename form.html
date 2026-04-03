@@ -480,7 +480,7 @@
 
     async function loadTeamInfo() {
       teamToken = getTokenFromUrl();
-      debugToken.textContent = teamToken ? ('Token letto dal link: ' + teamToken) : 'Nessun token nel link';
+      debugToken.textContent = teamToken ? ('Token letto dal links: ' + teamToken) : 'Nessun token nel link';
 
       if (!teamToken) {
         loadingBox.style.display = 'none';
