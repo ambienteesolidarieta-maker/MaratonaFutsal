@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vista Squadra - Maratona Futsal Montaione 2026</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121821;
+      --panel-2: #1a2230;
+      --text: #f3f6fb;
+      --muted: #9aa4b2;
+      --line: rgba(255,255,255,0.08);
+      --accent: #f0c14b;
+      --accent-2: #ffdd78;
+      --ok: #37d67a;
+      --danger: #ff6b6b;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .card {
+      background: rgba(18,24,33,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero {
+      padding: 28px 22px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero img {
+      max-width: 110px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 14px;
+      border-radius: 14px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      color: white;
+    }
+
+    .team-name {
+      margin-top: 10px;
+      font-size: 19px;
+      font-weight: bold;
+      color: var(--accent-2);
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .body {
+      padding: 22px;
+    }
+
+    .loader {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 10px;
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status.ok {
+      display: block;
+      background: rgba(55,214,122,0.12);
+      border: 1px solid rgba(55,214,122,0.25);
+      color: #baf3cf;
+    }
+
+    .status.err {
+      display: block;
+      background: rgba(255,107,107,0.12);
+      border: 1px solid rgba(255,107,107,0.25);
+      color: #ffd1d1;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .mini-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .mini-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .mini-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel-2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(255,255,255,0.03);
+      color: #dce3ed;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    td {
+      color: var(--text);
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .empty-box {
+      display: none;
+      padding: 18px;
+      border-radius: 16px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 22px; }
+      .team-name { font-size: 17px; }
+      .body { padding: 16px; }
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="hero">
+        <img src="logomar.jpeg" alt="Logo" />
+        <h1>Recap Squadra</h1>
+        <div id="teamName" class="team-name">Caricamento squadra...</div>
+        <div class="sub">Vista dedicata al dirigente</div>
+      </div>
+
+      <div class="body">
+        <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
+
+        <div id="contentBox" style="display:none;">
+          <div class="summary-grid">
+            <div class="mini-card">
+              <div class="mini-label">Totale iscritti</div>
+              <div id="totaleIscritti" class="mini-value">0</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Giocatori</div>
+              <div id="totGiocatori" class="mini-value">0</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Allenatori</div>
+              <div id="totAllenatori" class="mini-value">0</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Dirigenti</div>
+              <div id="totDirigenti" class="mini-value">0</div>
+            </div>
+          </div>
+
+          <div id="emptyBox" class="empty-box">Nessun iscritto presente.</div>
+
+          <div id="tableWrap" class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Cognome</th>
+                  <th>Ruolo</th>
+                  <th>Stato pratica</th>
+                  <th>Documento</th>
+                  <th>Visita</th>
+                  <th>Modulo</th>
+                </tr>
+              </thead>
+              <tbody id="rowsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="statusBox" class="status"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
+
+    const loadingBox = document.getElementById('loadingBox');
+    const contentBox = document.getElementById('contentBox');
+    const statusBox = document.getElementById('statusBox');
+    const teamNameEl = document.getElementById('teamName');
+    const rowsBody = document.getElementById('rowsBody');
+    const emptyBox = document.getElementById('emptyBox');
+    const tableWrap = document.getElementById('tableWrap');
+
+    function showStatus(type, message) {
+      statusBox.className = 'status ' + type;
+      statusBox.innerHTML = message;
+    }
+
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        team_code: (params.get('team_code') || params.get('team') || '').trim(),
+        token: (params.get('token') || params.get('t') || '').trim()
+      };
+    }
+
+    async function postJson(payload) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          signal: controller.signal
+        });
+
+        const text = await res.text();
+        return JSON.parse(text);
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          throw new Error('Timeout chiamata backend');
+        }
+        throw err;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    function linkOrDash(url, label) {
+      if (!url) return '-';
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    }
+
+    function renderRows(rows) {
+      rowsBody.innerHTML = '';
+
+      if (!rows || rows.length === 0) {
+        emptyBox.style.display = 'block';
+        tableWrap.style.display = 'none';
+        return;
+      }
+
+      emptyBox.style.display = 'none';
+      tableWrap.style.display = 'block';
+
+      rows.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.nome || ''}</td>
+          <td>${row.cognome || ''}</td>
+          <td>${row.ruolo || ''}</td>
+          <td>${row.stato_pratica || ''}</td>
+          <td>${linkOrDash(row.link_documento_identita, 'Apri')}</td>
+          <td>${linkOrDash(row.link_visita_sportiva, 'Apri')}</td>
+          <td>${linkOrDash(row.link_modulo_generato, 'Apri')}</td>
+        `;
+        rowsBody.appendChild(tr);
+      });
+    }
+
+    async function loadTeamView() {
+      const { team_code, token } = getUrlParams();
+
+      if (!team_code) {
+        loadingBox.style.display = 'none';
+        teamNameEl.textContent = 'Team mancante';
+        showStatus('err', 'Nel link manca il parametro team.');
+        return;
+      }
+
+      if (!token) {
+        loadingBox.style.display = 'none';
+        teamNameEl.textContent = 'Token mancante';
+        showStatus('err', 'Nel link manca il token.');
+        return;
+      }
+
+      try {
+        const data = await postJson({
+          action: 'getTeamView',
+          team_code,
+          token
+        });
+
+        if (!data.ok) {
+          throw new Error(data.error || 'Errore caricamento squadra');
+        }
+
+        teamNameEl.textContent = data.team_name || team_code;
+
+        document.getElementById('totGiocatori').textContent = data.counters?.Giocatore?.current ?? 0;
+        document.getElementById('totAllenatori').textContent = data.counters?.Allenatore?.current ?? 0;
+        document.getElementById('totDirigenti').textContent = data.counters?.Dirigente?.current ?? 0;
+        document.getElementById('totaleIscritti').textContent = Array.isArray(data.rows) ? data.rows.length : 0;
+
+        renderRows(data.rows || []);
+
+        loadingBox.style.display = 'none';
+        contentBox.style.display = 'block';
+      } catch (err) {
+        loadingBox.style.display = 'none';
+        teamNameEl.textContent = 'Squadra non disponibile';
+        showStatus('err', err.message || 'Errore caricamento vista squadra');
+      }
+    }
+
+    loadTeamView();
+  </script>
+</body>
+</html>
