@@ -40,6 +40,10 @@
       text-decoration: underline;
     }
 
+    button {
+      font-family: inherit;
+    }
+
     .wrap {
       width: 100%;
       max-width: 1180px;
@@ -165,7 +169,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 900px;
+      min-width: 1020px;
     }
 
     th, td {
@@ -182,6 +186,7 @@
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
+      white-space: nowrap;
     }
 
     td {
@@ -200,6 +205,48 @@
       border: 1px solid var(--line);
       color: var(--muted);
       text-align: center;
+    }
+
+    .actions-cell {
+      width: 72px;
+      text-align: center;
+    }
+
+    .btn-delete {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,107,107,0.35);
+      background: rgba(255,107,107,0.14);
+      color: #ff8f8f;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    }
+
+    .btn-delete:hover {
+      transform: translateY(-1px);
+      background: rgba(255,107,107,0.20);
+      border-color: rgba(255,107,107,0.55);
+    }
+
+    .btn-delete:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-delete svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .row-deleting {
+      opacity: 0.45;
+      pointer-events: none;
     }
 
     @media (max-width: 900px) {
@@ -264,6 +311,7 @@
                   <th>Documento</th>
                   <th>Visita</th>
                   <th>Modulo</th>
+                  <th>Azioni</th>
                 </tr>
               </thead>
               <tbody id="rowsBody"></tbody>
@@ -287,9 +335,20 @@
     const emptyBox = document.getElementById('emptyBox');
     const tableWrap = document.getElementById('tableWrap');
 
+    let currentRows = [];
+    let currentCounters = {};
+    let currentTeamCode = '';
+    let currentToken = '';
+    let currentTeamName = '';
+
     function showStatus(type, message) {
       statusBox.className = 'status ' + type;
       statusBox.innerHTML = message;
+    }
+
+    function clearStatus() {
+      statusBox.className = 'status';
+      statusBox.innerHTML = '';
     }
 
     function getUrlParams() {
@@ -302,7 +361,7 @@
 
     async function postJson(payload) {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
+      const timeout = setTimeout(() => controller.abort(), 20000);
 
       try {
         const res = await fetch(WEB_APP_URL, {
@@ -324,9 +383,34 @@
       }
     }
 
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
     function linkOrDash(url, label) {
       if (!url) return '-';
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      const safeUrl = escapeHtml(url);
+      return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    }
+
+    function trashIconSvg() {
+      return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9zm-1 12a2 2 0 0 1-2-2V8h16v11a2 2 0 0 1-2 2H6z"></path>
+        </svg>
+      `;
+    }
+
+    function updateSummary(counters, rows) {
+      document.getElementById('totGiocatori').textContent = counters?.Giocatore?.current ?? 0;
+      document.getElementById('totAllenatori').textContent = counters?.Allenatore?.current ?? 0;
+      document.getElementById('totDirigenti').textContent = counters?.Dirigente?.current ?? 0;
+      document.getElementById('totaleIscritti').textContent = Array.isArray(rows) ? rows.length : 0;
     }
 
     function renderRows(rows) {
@@ -341,23 +425,122 @@
       emptyBox.style.display = 'none';
       tableWrap.style.display = 'block';
 
-      rows.forEach(row => {
+      rows.forEach((row, index) => {
         const tr = document.createElement('tr');
+        tr.setAttribute('data-row-index', String(index));
+
         tr.innerHTML = `
-          <td>${row.nome || ''}</td>
-          <td>${row.cognome || ''}</td>
-          <td>${row.ruolo || ''}</td>
-          <td>${row.stato_pratica || ''}</td>
+          <td>${escapeHtml(row.nome || '')}</td>
+          <td>${escapeHtml(row.cognome || '')}</td>
+          <td>${escapeHtml(row.ruolo || '')}</td>
+          <td>${escapeHtml(row.stato_pratica || '')}</td>
           <td>${linkOrDash(row.link_documento_identita, 'Apri')}</td>
           <td>${linkOrDash(row.link_visita_sportiva, 'Apri')}</td>
           <td>${linkOrDash(row.link_modulo_generato, 'Apri')}</td>
+          <td class="actions-cell">
+            <button
+              type="button"
+              class="btn-delete"
+              title="Elimina iscritto"
+              aria-label="Elimina iscritto"
+              onclick="handleDeletePlayer(${index})"
+            >
+              ${trashIconSvg()}
+            </button>
+          </td>
         `;
+
         rowsBody.appendChild(tr);
       });
     }
 
+    function setRowDeleting(index, deleting) {
+      const tr = rowsBody.querySelector(`tr[data-row-index="${index}"]`);
+      if (!tr) return;
+
+      const btn = tr.querySelector('.btn-delete');
+      if (deleting) {
+        tr.classList.add('row-deleting');
+        if (btn) btn.disabled = true;
+      } else {
+        tr.classList.remove('row-deleting');
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function handleDeletePlayer(index) {
+      const row = currentRows[index];
+      if (!row) return;
+
+      const nome = [row.nome || '', row.cognome || ''].join(' ').trim() || 'questo iscritto';
+
+      const conferma = confirm(
+        `Confermi l'eliminazione di ${nome}?\n\n` +
+        `Verranno eliminati:\n` +
+        `- il record dell'iscrizione\n` +
+        `- il modulo generato\n` +
+        `- la foto del documento\n` +
+        `- la foto della visita sportiva`
+      );
+
+      if (!conferma) return;
+
+      clearStatus();
+      setRowDeleting(index, true);
+
+      try {
+        const data = await postJson({
+          action: 'deletePlayerRegistration',
+          team_code: currentTeamCode,
+          token: currentToken,
+          row_number: row.row_number,
+          row_id: row.row_id || '',
+          nome: row.nome || '',
+          cognome: row.cognome || ''
+        });
+
+        if (!data.ok) {
+          throw new Error(data.error || 'Errore durante l’eliminazione');
+        }
+
+        currentRows.splice(index, 1);
+
+        if (data.counters) {
+          currentCounters = data.counters;
+        } else {
+          currentCounters = recomputeCountersFromRows(currentRows);
+        }
+
+        updateSummary(currentCounters, currentRows);
+        renderRows(currentRows);
+
+        showStatus('ok', data.message || 'Iscritto eliminato correttamente.');
+      } catch (err) {
+        setRowDeleting(index, false);
+        showStatus('err', err.message || 'Errore eliminazione iscritto');
+      }
+    }
+
+    function recomputeCountersFromRows(rows) {
+      const counters = {
+        Giocatore: { current: 0 },
+        Allenatore: { current: 0 },
+        Dirigente: { current: 0 }
+      };
+
+      (rows || []).forEach(row => {
+        const ruolo = (row.ruolo || '').trim();
+        if (!counters[ruolo]) counters[ruolo] = { current: 0 };
+        counters[ruolo].current += 1;
+      });
+
+      return counters;
+    }
+
     async function loadTeamView() {
       const { team_code, token } = getUrlParams();
+      currentTeamCode = team_code;
+      currentToken = token;
 
       if (!team_code) {
         loadingBox.style.display = 'none';
@@ -384,14 +567,13 @@
           throw new Error(data.error || 'Errore caricamento squadra');
         }
 
-        teamNameEl.textContent = data.team_name || team_code;
+        currentTeamName = data.team_name || team_code;
+        currentRows = Array.isArray(data.rows) ? data.rows : [];
+        currentCounters = data.counters || {};
 
-        document.getElementById('totGiocatori').textContent = data.counters?.Giocatore?.current ?? 0;
-        document.getElementById('totAllenatori').textContent = data.counters?.Allenatore?.current ?? 0;
-        document.getElementById('totDirigenti').textContent = data.counters?.Dirigente?.current ?? 0;
-        document.getElementById('totaleIscritti').textContent = Array.isArray(data.rows) ? data.rows.length : 0;
-
-        renderRows(data.rows || []);
+        teamNameEl.textContent = currentTeamName;
+        updateSummary(currentCounters, currentRows);
+        renderRows(currentRows);
 
         loadingBox.style.display = 'none';
         contentBox.style.display = 'block';
