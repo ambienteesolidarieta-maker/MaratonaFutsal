@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vista Master - Maratona Futsal Montaione 2026</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --panel: #121821;
+      --panel-2: #1a2230;
+      --text: #f3f6fb;
+      --muted: #9aa4b2;
+      --line: rgba(255,255,255,0.08);
+      --accent: #f0c14b;
+      --accent-2: #ffdd78;
+      --danger: #ff6b6b;
+      --ok: #37d67a;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .card {
+      background: rgba(18,24,33,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero {
+      padding: 28px 22px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero img {
+      max-width: 110px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 14px;
+      border-radius: 14px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      color: white;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .body {
+      padding: 22px;
+    }
+
+    .loader {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 10px;
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status.err {
+      display: block;
+      background: rgba(255,107,107,0.12);
+      border: 1px solid rgba(255,107,107,0.25);
+      color: #ffd1d1;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .mini-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .mini-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .mini-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--panel-2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+    }
+
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(255,255,255,0.03);
+      color: #dce3ed;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    @media (max-width: 900px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 22px; }
+      .body { padding: 16px; }
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="hero">
+        <img src="logomar.jpeg" alt="Logo" />
+        <h1>Vista Master Organizzatori</h1>
+        <div class="sub">Quadro generale di tutte le squadre</div>
+      </div>
+
+      <div class="body">
+        <div id="loadingBox" class="loader">Caricamento dati generali...</div>
+
+        <div id="contentBox" style="display:none;">
+          <div class="summary-grid">
+            <div class="mini-card">
+              <div class="mini-label">Squadre</div>
+              <div id="totTeams" class="mini-value">0</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Totale iscritti</div>
+              <div id="totIscritti" class="mini-value">0</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Giocatori</div>
+              <div id="totGiocatori" class="mini-value">0</div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">Allenatori + Dirigenti</div>
+              <div id="totStaff" class="mini-value">0</div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Squadra</th>
+                  <th>Totale iscritti</th>
+                  <th>Giocatori</th>
+                  <th>Allenatori</th>
+                  <th>Dirigenti</th>
+                  <th>Posti giocatori</th>
+                  <th>Allenatore</th>
+                  <th>Dirigente</th>
+                </tr>
+              </thead>
+              <tbody id="rowsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="statusBox" class="status"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
+
+    const loadingBox = document.getElementById('loadingBox');
+    const contentBox = document.getElementById('contentBox');
+    const statusBox = document.getElementById('statusBox');
+    const rowsBody = document.getElementById('rowsBody');
+
+    function showStatus(type, message) {
+      statusBox.className = 'status ' + type;
+      statusBox.innerHTML = message;
+    }
+
+    function getTokenFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return (params.get('token') || params.get('t') || '').trim();
+    }
+
+    async function postJson(payload) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          signal: controller.signal
+        });
+
+        const text = await res.text();
+        return JSON.parse(text);
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          throw new Error('Timeout chiamata backend');
+        }
+        throw err;
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+
+    function yesNo(value) {
+      return value ? 'Completo' : 'Disponibile';
+    }
+
+    function renderRows(teams) {
+      rowsBody.innerHTML = '';
+
+      teams.forEach(team => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${team.team_name || team.team_code || ''}</td>
+          <td>${team.total_iscritti ?? 0}</td>
+          <td>${team.giocatori ?? 0}</td>
+          <td>${team.allenatori ?? 0}</td>
+          <td>${team.dirigenti ?? 0}</td>
+          <td>${team.giocatori_disponibili ?? 0}</td>
+          <td>${yesNo(!(team.allenatore_disponibile))}</td>
+          <td>${yesNo(!(team.dirigente_disponibile))}</td>
+        `;
+        rowsBody.appendChild(tr);
+      });
+    }
+
+    async function loadMasterView() {
+      const token = getTokenFromUrl();
+
+      if (!token) {
+        loadingBox.style.display = 'none';
+        showStatus('err', 'Nel link manca il token master.');
+        return;
+      }
+
+      try {
+        const data = await postJson({
+          action: 'getMasterView',
+          token
+        });
+
+        if (!data.ok) {
+          throw new Error(data.error || 'Errore caricamento vista master');
+        }
+
+        const teams = Array.isArray(data.teams) ? data.teams : [];
+
+        let totalIscritti = 0;
+        let totalGiocatori = 0;
+        let totalAllenatori = 0;
+        let totalDirigenti = 0;
+
+        teams.forEach(t => {
+          totalIscritti += Number(t.total_iscritti || 0);
+          totalGiocatori += Number(t.giocatori || 0);
+          totalAllenatori += Number(t.allenatori || 0);
+          totalDirigenti += Number(t.dirigenti || 0);
+        });
+
+        document.getElementById('totTeams').textContent = teams.length;
+        document.getElementById('totIscritti').textContent = totalIscritti;
+        document.getElementById('totGiocatori').textContent = totalGiocatori;
+        document.getElementById('totStaff').textContent = totalAllenatori + totalDirigenti;
+
+        renderRows(teams);
+
+        loadingBox.style.display = 'none';
+        contentBox.style.display = 'block';
+      } catch (err) {
+        loadingBox.style.display = 'none';
+        showStatus('err', err.message || 'Errore caricamento vista master');
+      }
+    }
+
+    loadMasterView();
+  </script>
+</body>
+</html>
