@@ -1,584 +1,645 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Modulo Iscrizione Maratona Futsal Montaione 2026</title>
   <style>
-    :root{
-      --bg:#050816;
-      --bg2:#0b1223;
-      --card:rgba(255,255,255,.06);
-      --border:rgba(255,255,255,.10);
-      --text:#f8fafc;
-      --muted:#94a3b8;
-      --shadow:0 20px 60px rgba(0,0,0,.45);
-      --input-bg:rgba(255,255,255,.05);
-      --input-border:rgba(255,255,255,.12);
-      --accent:#ffffff;
-      --danger:#f87171;
-      --ok:#4ade80;
+    :root {
+      --bg: #0b0f14;
+      --panel: #121821;
+      --panel-2: #1a2230;
+      --text: #f3f6fb;
+      --muted: #9aa4b2;
+      --line: rgba(255,255,255,0.08);
+      --accent: #f0c14b;
+      --accent-2: #ffdd78;
+      --danger: #ff6b6b;
+      --ok: #37d67a;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 18px;
     }
 
-    *{ box-sizing:border-box; }
+    * { box-sizing: border-box; }
 
-    html,body{
-      margin:0;
-      padding:0;
-      width:100%;
-      min-height:100%;
-      font-family:Arial, Helvetica, sans-serif;
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
       background:
-        radial-gradient(circle at top, #16213b 0%, transparent 35%),
-        radial-gradient(circle at bottom right, #0f172a 0%, transparent 30%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-      color:var(--text);
+        radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+      color: var(--text);
     }
 
-    body{
-      padding:24px;
+    .wrap {
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
     }
 
-    .page{
-      width:100%;
-      max-width:980px;
-      margin:0 auto;
+    .card {
+      background: rgba(18,24,33,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
     }
 
-    .card{
-      border:1px solid var(--border);
-      background:var(--card);
-      backdrop-filter:blur(18px);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
+    .hero {
+      padding: 28px 22px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-bottom: 1px solid var(--line);
     }
 
-    .header{
-      display:flex;
-      align-items:center;
-      gap:18px;
-      padding:24px 24px 18px;
-      border-bottom:1px solid rgba(255,255,255,.08);
+    .hero img {
+      max-width: 130px;
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 14px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
     }
 
-    .header-logo-wrap{
-      width:92px;
-      height:92px;
-      flex:0 0 92px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:20px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-      overflow:hidden;
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      color: white;
     }
 
-    .header-logo{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      padding:8px;
+    .team-name {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--accent-2);
     }
 
-    .header-text{
-      min-width:0;
+    .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
-    .eyebrow{
-      margin:0 0 6px;
-      font-size:13px;
-      color:#cbd5e1;
-      letter-spacing:.08em;
-      text-transform:uppercase;
+    .body {
+      padding: 22px;
     }
 
-    h1{
-      margin:0;
-      font-size:clamp(26px, 4vw, 42px);
-      line-height:1.08;
-      letter-spacing:-0.03em;
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
     }
 
-    .team-title{
-      margin:10px 0 0;
-      font-size:clamp(18px, 2.4vw, 26px);
-      color:#ffffff;
-      font-weight:700;
+    .full {
+      grid-column: 1 / -1;
     }
 
-    .team-subtitle{
-      margin:8px 0 0;
-      color:var(--muted);
-      font-size:15px;
-      line-height:1.5;
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #dce3ed;
     }
 
-    .body{
-      padding:24px;
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: white;
+      outline: none;
+      font-size: 15px;
     }
 
-    .status{
-      margin:0 0 20px;
-      padding:14px 16px;
-      border-radius:16px;
-      font-size:14px;
-      line-height:1.45;
-      display:none;
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(240,193,75,0.55);
+      box-shadow: 0 0 0 3px rgba(240,193,75,0.12);
     }
 
-    .status.show{ display:block; }
-
-    .status.info{
-      background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08);
-      color:#e2e8f0;
+    .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
     }
 
-    .status.error{
-      background:rgba(248,113,113,.10);
-      border:1px solid rgba(248,113,113,.25);
-      color:#fecaca;
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
     }
 
-    .status.success{
-      background:rgba(74,222,128,.10);
-      border:1px solid rgba(74,222,128,.25);
-      color:#bbf7d0;
+    .check-row input {
+      margin-top: 3px;
+      transform: scale(1.2);
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:18px;
+    .sig-box {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
     }
 
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+    #signatureCanvas {
+      display: block;
+      width: 100%;
+      height: 220px;
+      touch-action: none;
+      background: #fff;
+      cursor: crosshair;
     }
 
-    .field.full{
-      grid-column:1 / -1;
+    .sig-actions {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      background: #f5f5f5;
+      border-top: 1px solid #ddd;
     }
 
-    label{
-      font-size:14px;
-      font-weight:700;
-      color:#e5e7eb;
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: transform .12s ease, opacity .12s ease;
     }
 
-    input, select, textarea{
-      width:100%;
-      border:1px solid var(--input-border);
-      background:var(--input-bg);
-      color:var(--text);
-      border-radius:14px;
-      padding:14px 15px;
-      font-size:15px;
-      outline:none;
-      transition:border-color .15s ease, background .15s ease, transform .15s ease;
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #161616;
     }
 
-    input:focus, select:focus, textarea:focus{
-      border-color:rgba(255,255,255,.30);
-      background:rgba(255,255,255,.08);
+    .btn-secondary {
+      background: #212b3a;
+      color: white;
+      border: 1px solid var(--line);
     }
 
-    textarea{
-      min-height:120px;
-      resize:vertical;
+    .btn-danger {
+      background: #2a1820;
+      color: #ffb8c0;
+      border: 1px solid rgba(255,107,107,0.2);
     }
 
-    .hint{
-      color:var(--muted);
-      font-size:12px;
-      line-height:1.45;
+    .submit-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 26px;
     }
 
-    .section-title{
-      margin:28px 0 14px;
-      font-size:18px;
-      font-weight:800;
-      color:#fff;
+    .submit-btn {
+      min-width: 230px;
+      padding: 16px 22px;
+      font-size: 16px;
     }
 
-    .checkbox-row{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      padding:4px 0;
+    .status {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
-    .checkbox-row input[type="checkbox"]{
-      width:18px;
-      height:18px;
-      margin-top:2px;
-      padding:0;
-      border-radius:6px;
+    .status.ok {
+      display: block;
+      background: rgba(55,214,122,0.12);
+      border: 1px solid rgba(55,214,122,0.25);
+      color: #baf3cf;
     }
 
-    .actions{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-top:28px;
-      flex-wrap:wrap;
+    .status.err {
+      display: block;
+      background: rgba(255,107,107,0.12);
+      border: 1px solid rgba(255,107,107,0.25);
+      color: #ffd1d1;
     }
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:220px;
-      min-height:56px;
-      padding:0 26px;
-      border:none;
-      border-radius:999px;
-      text-decoration:none;
-      font-size:16px;
-      font-weight:800;
-      cursor:pointer;
-      transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    .loader {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 10px;
+      font-size: 14px;
     }
 
-    .btn-primary{
-      background:#fff;
-      color:#0f172a;
-      box-shadow:0 12px 30px rgba(255,255,255,.15);
+    .footer-note {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
     }
 
-    .btn-primary:hover{
-      transform:translateY(-2px);
-      box-shadow:0 16px 34px rgba(255,255,255,.20);
-    }
-
-    .btn-secondary{
-      background:rgba(255,255,255,.06);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.10);
-    }
-
-    .meta{
-      margin-top:16px;
-      font-size:12px;
-      color:#64748b;
-    }
-
-    .loader{
-      width:18px;
-      height:18px;
-      border:2px solid rgba(15,23,42,.2);
-      border-top-color:#0f172a;
-      border-radius:50%;
-      animation:spin .8s linear infinite;
-      display:none;
-      margin-right:8px;
-    }
-
-    .btn.loading .loader{
-      display:inline-block;
-    }
-
-    .btn.loading{
-      opacity:.8;
-      pointer-events:none;
-    }
-
-    @keyframes spin{
-      to{ transform:rotate(360deg); }
-    }
-
-    @media (max-width: 760px){
-      body{ padding:14px; }
-
-      .header{
-        flex-direction:column;
-        align-items:flex-start;
+    @media (max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
       }
 
-      .grid{
-        grid-template-columns:1fr;
+      h1 {
+        font-size: 22px;
       }
 
-      .header-logo-wrap{
-        width:78px;
-        height:78px;
-        flex-basis:78px;
+      .team-name {
+        font-size: 17px;
       }
 
-      .actions{
-        flex-direction:column;
-        align-items:stretch;
-      }
-
-      .btn{
-        width:100%;
+      .body {
+        padding: 16px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <section class="card">
-      <div class="header">
-        <div class="header-logo-wrap">
-          <img
-            class="header-logo"
-            src="logomar.jpeg"
-            alt="Logo Maratona Futsal"
-            onerror="this.style.display='none';"
-          />
-        </div>
-
-        <div class="header-text">
-          <p class="eyebrow">Iscrizioni ufficiali</p>
-          <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
-          <div id="teamTitle" class="team-title">Caricamento nome team…</div>
-          <p class="team-subtitle">
-            Compila i campi richiesti e verifica attentamente i dati prima dell’invio.
-          </p>
-        </div>
+  <div class="wrap">
+    <div class="card">
+      <div class="hero">
+        <img src="logomar.jpeg" alt="Logo Maratona Futsal Montaione" />
+        <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
+        <div id="teamName" class="team-name">Caricamento squadra...</div>
+        <div class="sub">Compila tutti i campi richiesti e firma nel riquadro in basso.</div>
       </div>
 
       <div class="body">
-        <div id="statusBox" class="status info show">
-          Sto recuperando i dati della squadra…
-        </div>
+        <div id="loadingBox" class="loader">Verifica token squadra in corso...</div>
 
-        <form id="iscrizioneForm">
+        <form id="registrationForm" style="display:none;">
           <div class="grid">
+            <div class="field">
+              <label for="nome">Nome *</label>
+              <input type="text" id="nome" name="nome" required />
+            </div>
+
+            <div class="field">
+              <label for="cognome">Cognome *</label>
+              <input type="text" id="cognome" name="cognome" required />
+            </div>
+
+            <div class="field">
+              <label for="natoA">Nato a *</label>
+              <input type="text" id="natoA" name="natoA" required />
+            </div>
+
+            <div class="field">
+              <label for="dataNascita">Data di nascita *</label>
+              <input type="date" id="dataNascita" name="dataNascita" required />
+            </div>
+
+            <div class="field">
+              <label for="residenteIn">Residente in *</label>
+              <input type="text" id="residenteIn" name="residenteIn" required />
+            </div>
+
+            <div class="field">
+              <label for="provincia">Provincia *</label>
+              <input type="text" id="provincia" name="provincia" maxlength="2" required />
+            </div>
+
+            <div class="field">
+              <label for="via">Via *</label>
+              <input type="text" id="via" name="via" required />
+            </div>
+
+            <div class="field">
+              <label for="civico">N° civico *</label>
+              <input type="text" id="civico" name="civico" required />
+            </div>
+
+            <div class="field">
+              <label for="telefono">Telefono *</label>
+              <input type="tel" id="telefono" name="telefono" required />
+            </div>
+
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+
             <div class="field full">
-              <label for="teamNameDisplay">Squadra</label>
-              <input id="teamNameDisplay" name="teamNameDisplay" type="text" readonly />
-              <div class="hint">Campo compilato automaticamente dai dati del team.</div>
-            </div>
-
-            <div class="field">
-              <label for="referenteNome">Nome referente</label>
-              <input id="referenteNome" name="referenteNome" type="text" required />
-            </div>
-
-            <div class="field">
-              <label for="referenteCognome">Cognome referente</label>
-              <input id="referenteCognome" name="referenteCognome" type="text" required />
-            </div>
-
-            <div class="field">
-              <label for="telefono">Telefono</label>
-              <input id="telefono" name="telefono" type="tel" required />
-            </div>
-
-            <div class="field">
-              <label for="email">Email</label>
-              <input id="email" name="email" type="email" required />
+              <label for="ruolo">Ruolo *</label>
+              <select id="ruolo" name="ruolo" required>
+                <option value="">Seleziona ruolo</option>
+                <option value="Giocatore">Giocatore</option>
+                <option value="Allenatore">Allenatore</option>
+                <option value="Dirigente">Dirigente</option>
+              </select>
+              <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
             </div>
 
             <div class="field full">
-              <label for="indirizzo">Indirizzo</label>
-              <input id="indirizzo" name="indirizzo" type="text" />
+              <label>Foto documento identità *</label>
+              <input type="file" id="docIdentita" accept="image/*" required />
             </div>
 
-            <div class="field">
-              <label for="citta">Città</label>
-              <input id="citta" name="citta" type="text" />
+            <div class="field full">
+              <label>Foto visita sportiva *</label>
+              <input type="file" id="visitaSportiva" accept="image/*" required />
             </div>
 
-            <div class="field">
-              <label for="provincia">Provincia</label>
-              <input id="provincia" name="provincia" type="text" />
+            <div class="field full">
+              <label>Check accettazione *</label>
+              <div class="check-row">
+                <input type="checkbox" id="accettazione" required />
+                <label for="accettazione" style="margin:0; font-weight:normal; line-height:1.5;">
+                  Dichiaro che i dati inseriti sono corretti e autorizzo il trattamento degli stessi per la gestione dell’iscrizione al torneo.
+                </label>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label>Firma grafica *</label>
+              <div class="sig-box">
+                <canvas id="signatureCanvas"></canvas>
+                <div class="sig-actions">
+                  <button type="button" class="btn btn-secondary" id="clearSignatureBtn">Pulisci firma</button>
+                </div>
+              </div>
+              <div class="hint">Firma con mouse o dito.</div>
             </div>
           </div>
 
-          <div class="section-title">Dichiarazioni</div>
-
-          <div class="checkbox-row">
-            <input id="privacyOk" name="privacyOk" type="checkbox" required />
-            <label for="privacyOk">
-              Dichiaro di aver letto l’informativa privacy e autorizzo il trattamento dei dati ai fini dell’iscrizione.
-            </label>
-          </div>
-
-          <div class="checkbox-row">
-            <input id="regolamentoOk" name="regolamentoOk" type="checkbox" required />
-            <label for="regolamentoOk">
-              Dichiaro di accettare il regolamento della manifestazione.
-            </label>
-          </div>
-
-          <div class="field full" style="margin-top:18px;">
-            <label for="note">Note</label>
-            <textarea id="note" name="note" placeholder="Inserisci eventuali comunicazioni aggiuntive"></textarea>
-          </div>
-
-          <input id="teamCode" name="teamCode" type="hidden" />
-          <input id="token" name="token" type="hidden" />
-
-          <div class="actions">
-            <button id="submitBtn" type="submit" class="btn btn-primary">
-              <span class="loader"></span>
-              <span>Invia iscrizione</span>
+          <div class="submit-wrap">
+            <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
+              Invia iscrizione
             </button>
-
-            <a class="btn btn-secondary" href="index.html">
-              Torna alla home
-            </a>
-          </div>
-
-          <div class="meta">
-            Il modulo può essere aperto da link personalizzato con parametri dedicati alla squadra.
           </div>
         </form>
+
+        <div id="statusBox" class="status"></div>
+        <div class="footer-note">Powered by GitHub Pages + Google Apps Script</div>
       </div>
-    </section>
+    </div>
   </div>
 
   <script>
-    /*
-      IMPORTANTE:
-      qui va inserita la URL della tua Web App Apps Script.
-      Esempio:
-      const API_URL = 'https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxxxx/exec';
-    */
-    const API_URL = '';
+    /**
+     * INSERISCI QUI IL TUO URL WEB APP DI APPS SCRIPT
+     */
+    const WEB_APP_URL = 'INCOLLA_QUI_URL_WEB_APP_APPS_SCRIPT';
 
-    const params = new URLSearchParams(window.location.search);
-    const team = params.get('team') || '';
-    const token = params.get('token') || '';
+    let teamToken = '';
+    let teamInfo = null;
 
+    const loadingBox = document.getElementById('loadingBox');
+    const form = document.getElementById('registrationForm');
+    const teamNameEl = document.getElementById('teamName');
     const statusBox = document.getElementById('statusBox');
-    const teamTitle = document.getElementById('teamTitle');
-    const teamNameDisplay = document.getElementById('teamNameDisplay');
-    const teamCodeInput = document.getElementById('teamCode');
-    const tokenInput = document.getElementById('token');
-    const form = document.getElementById('iscrizioneForm');
     const submitBtn = document.getElementById('submitBtn');
 
-    teamCodeInput.value = team;
-    tokenInput.value = token;
-
-    function showStatus(message, type = 'info') {
-      statusBox.className = `status ${type} show`;
-      statusBox.textContent = message;
+    function showStatus(type, message) {
+      statusBox.className = 'status ' + type;
+      statusBox.innerHTML = message;
     }
 
-    function setTeamName(name) {
-      const safeName = name && String(name).trim() ? String(name).trim() : 'Team non trovato';
-      teamTitle.textContent = safeName;
-      teamNameDisplay.value = safeName;
+    function getTokenFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return (
+        params.get('token') ||
+        params.get('t') ||
+        params.get('team') ||
+        ''
+      ).trim();
     }
 
-    async function loadTeamData() {
-      if (!team) {
-        setTeamName('Team non specificato');
-        showStatus('Manca il parametro team nel link.', 'error');
-        return;
+    async function postJson(payload) {
+      const res = await fetch(WEB_APP_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        }
+      });
+
+      const text = await res.text();
+
+      try {
+        return JSON.parse(text);
+      } catch (err) {
+        throw new Error('Risposta backend non valida: ' + text);
       }
+    }
 
-      if (!API_URL) {
-        setTeamName(team);
-        showStatus('Endpoint non ancora impostato: per ora visualizzo il codice team passato nel link.', 'info');
+    async function loadTeamInfo() {
+      teamToken = getTokenFromUrl();
+
+      if (!teamToken) {
+        loadingBox.style.display = 'none';
+        teamNameEl.textContent = 'Token squadra mancante';
+        showStatus('err', 'Link non valido: token squadra assente.');
         return;
       }
 
       try {
-        showStatus('Sto recuperando il nome della squadra…', 'info');
+        const data = await postJson({
+          action: 'getTeamInfo',
+          token: teamToken
+        });
 
-        const url = `${API_URL}?action=getTeam&team=${encodeURIComponent(team)}&token=${encodeURIComponent(token)}`;
-        const res = await fetch(url, { method: 'GET' });
-
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
+        if (!data.ok) {
+          throw new Error(data.error || 'Squadra non valida');
         }
 
-        const data = await res.json();
-
-        if (!data || data.ok !== true) {
-          throw new Error(data && data.error ? data.error : 'Risposta non valida');
-        }
-
-        /*
-          Atteso dal backend, ad esempio:
-          {
-            "ok": true,
-            "teamName": "Real Montaione"
-          }
-        */
-        setTeamName(data.teamName || team);
-        showStatus('Dati squadra caricati correttamente.', 'success');
+        teamInfo = data;
+        teamNameEl.textContent = data.team_name || data.teamName || 'Squadra';
+        loadingBox.style.display = 'none';
+        form.style.display = 'block';
       } catch (err) {
-        console.error(err);
-        setTeamName(team);
-        showStatus('Non sono riuscito a leggere il nome squadra dallo Sheet. Per ora visualizzo il codice team del link.', 'error');
+        loadingBox.style.display = 'none';
+        teamNameEl.textContent = 'Squadra non disponibile';
+        showStatus('err', err.message || 'Errore nel recupero squadra');
       }
+    }
+
+    function setupSignatureCanvas() {
+      const canvas = document.getElementById('signatureCanvas');
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+      let hasSignature = false;
+
+      function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * ratio;
+        canvas.height = rect.height * ratio;
+        ctx.scale(ratio, ratio);
+        ctx.lineWidth = 2.2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#111';
+      }
+
+      resizeCanvas();
+      window.addEventListener('resize', () => {
+        const saved = hasSignature ? canvas.toDataURL('image/png') : null;
+        resizeCanvas();
+        if (saved) {
+          const img = new Image();
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.clientWidth, canvas.clientHeight);
+          };
+          img.src = saved;
+        }
+      });
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const point = e.touches ? e.touches[0] : e;
+        return {
+          x: point.clientX - rect.left,
+          y: point.clientY - rect.top
+        };
+      }
+
+      function start(e) {
+        drawing = true;
+        hasSignature = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        e.preventDefault();
+      }
+
+      function move(e) {
+        if (!drawing) return;
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        e.preventDefault();
+      }
+
+      function end(e) {
+        drawing = false;
+        e.preventDefault();
+      }
+
+      canvas.addEventListener('mousedown', start);
+      canvas.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
+
+      canvas.addEventListener('touchstart', start, { passive: false });
+      canvas.addEventListener('touchmove', move, { passive: false });
+      window.addEventListener('touchend', end, { passive: false });
+
+      document.getElementById('clearSignatureBtn').addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        hasSignature = false;
+      });
+
+      window.getSignatureDataUrl = function () {
+        return hasSignature ? canvas.toDataURL('image/png') : '';
+      };
+    }
+
+    function formatTodayIT() {
+      const d = new Date();
+      const gg = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${gg}/${mm}/${yyyy}`;
+    }
+
+    async function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      statusBox.style.display = 'none';
 
-      if (!form.reportValidity()) return;
-
-      if (!API_URL) {
-        showStatus('Invio non configurato: devo collegare questa pagina al tuo Apps Script.', 'error');
+      const signatureDataUrl = window.getSignatureDataUrl();
+      if (!signatureDataUrl) {
+        showStatus('err', 'Firma obbligatoria.');
         return;
       }
 
-      submitBtn.classList.add('loading');
+      const docFile = document.getElementById('docIdentita').files[0];
+      const visitaFile = document.getElementById('visitaSportiva').files[0];
 
-      const payload = {
-        action: 'submitRegistration',
-        team: teamCodeInput.value,
-        token: tokenInput.value,
-        teamName: teamNameDisplay.value,
-        referenteNome: document.getElementById('referenteNome').value.trim(),
-        referenteCognome: document.getElementById('referenteCognome').value.trim(),
-        telefono: document.getElementById('telefono').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        indirizzo: document.getElementById('indirizzo').value.trim(),
-        citta: document.getElementById('citta').value.trim(),
-        provincia: document.getElementById('provincia').value.trim(),
-        privacyOk: document.getElementById('privacyOk').checked,
-        regolamentoOk: document.getElementById('regolamentoOk').checked,
-        note: document.getElementById('note').value.trim()
-      };
+      if (!docFile || !visitaFile) {
+        showStatus('err', 'Carica entrambe le immagini richieste.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Invio in corso...';
 
       try {
-        showStatus('Invio in corso…', 'info');
-
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+        const payload = {
+          action: 'submitRegistration',
+          token: teamToken,
+          team_code: teamInfo?.team_code || '',
+          team_name: teamInfo?.team_name || '',
+          today: formatTodayIT(),
+          nome: document.getElementById('nome').value.trim(),
+          cognome: document.getElementById('cognome').value.trim(),
+          nato_a: document.getElementById('natoA').value.trim(),
+          data_nascita: document.getElementById('dataNascita').value,
+          residente_in: document.getElementById('residenteIn').value.trim(),
+          provincia: document.getElementById('provincia').value.trim().toUpperCase(),
+          via: document.getElementById('via').value.trim(),
+          civico: document.getElementById('civico').value.trim(),
+          telefono: document.getElementById('telefono').value.trim(),
+          email: document.getElementById('email').value.trim(),
+          ruolo: document.getElementById('ruolo').value,
+          accettazione: document.getElementById('accettazione').checked,
+          firma_base64: signatureDataUrl,
+          documento_identita: {
+            name: docFile.name,
+            data: await fileToBase64(docFile)
           },
-          body: JSON.stringify(payload)
-        });
+          visita_sportiva: {
+            name: visitaFile.name,
+            data: await fileToBase64(visitaFile)
+          }
+        };
 
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
+        const result = await postJson(payload);
+
+        if (!result.ok) {
+          throw new Error(result.error || 'Invio non riuscito');
         }
 
-        const data = await res.json();
-
-        if (!data || data.ok !== true) {
-          throw new Error(data && data.error ? data.error : 'Invio non riuscito');
-        }
-
-        showStatus('Modulo inviato correttamente.', 'success');
         form.reset();
-        teamCodeInput.value = team;
-        tokenInput.value = token;
-        teamNameDisplay.value = teamTitle.textContent;
+        document.getElementById('clearSignatureBtn').click();
+
+        showStatus(
+          'ok',
+          'Iscrizione inviata correttamente.' +
+          (result.pdf_url ? '<br><br><b>PDF generato:</b> ' + result.pdf_url : '')
+        );
       } catch (err) {
-        console.error(err);
-        showStatus('Errore durante l’invio del modulo.', 'error');
+        showStatus('err', err.message || 'Errore durante l’invio');
       } finally {
-        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Invia iscrizione';
       }
     });
 
-    loadTeamData();
+    setupSignatureCanvas();
+    loadTeamInfo();
   </script>
 </body>
 </html>
