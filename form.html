@@ -84,6 +84,13 @@
       font-size: 14px;
     }
 
+    .debug-token {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #c8d1dc;
+      word-break: break-all;
+    }
+
     .body {
       padding: 22px;
     }
@@ -107,8 +114,7 @@
     }
 
     .field input,
-    .field select,
-    .field textarea {
+    .field select {
       width: 100%;
       padding: 14px 14px;
       border-radius: 14px;
@@ -119,19 +125,6 @@
       font-size: 15px;
     }
 
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: rgba(240,193,75,0.55);
-      box-shadow: 0 0 0 3px rgba(240,193,75,0.12);
-    }
-
-    .hint {
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
     .check-row {
       display: flex;
       align-items: flex-start;
@@ -140,11 +133,6 @@
       border-radius: 14px;
       background: var(--panel-2);
       border: 1px solid var(--line);
-    }
-
-    .check-row input {
-      margin-top: 3px;
-      transform: scale(1.2);
     }
 
     .sig-box {
@@ -179,10 +167,7 @@
       cursor: pointer;
       font-weight: bold;
       font-size: 14px;
-      transition: transform .12s ease, opacity .12s ease;
     }
-
-    .btn:hover { transform: translateY(-1px); }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
@@ -193,12 +178,6 @@
       background: #212b3a;
       color: white;
       border: 1px solid var(--line);
-    }
-
-    .btn-danger {
-      background: #2a1820;
-      color: #ffb8c0;
-      border: 1px solid rgba(255,107,107,0.2);
     }
 
     .submit-wrap {
@@ -243,13 +222,6 @@
       font-size: 14px;
     }
 
-    .footer-note {
-      margin-top: 18px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
     @media (max-width: 700px) {
       .grid {
         grid-template-columns: 1fr;
@@ -273,10 +245,11 @@
   <div class="wrap">
     <div class="card">
       <div class="hero">
-        <img src="logomar.jpeg" alt="Logo Maratona Futsal Montaione" />
+        <img src="logomar.jpeg" alt="Logo" />
         <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
         <div id="teamName" class="team-name">Caricamento squadra...</div>
-        <div class="sub">Compila tutti i campi richiesti e firma nel riquadro in basso.</div>
+        <div class="sub">Compila tutti i campi richiesti</div>
+        <div id="debugToken" class="debug-token"></div>
       </div>
 
       <div class="body">
@@ -286,63 +259,62 @@
           <div class="grid">
             <div class="field">
               <label for="nome">Nome *</label>
-              <input type="text" id="nome" name="nome" required />
+              <input type="text" id="nome" required />
             </div>
 
             <div class="field">
               <label for="cognome">Cognome *</label>
-              <input type="text" id="cognome" name="cognome" required />
+              <input type="text" id="cognome" required />
             </div>
 
             <div class="field">
               <label for="natoA">Nato a *</label>
-              <input type="text" id="natoA" name="natoA" required />
+              <input type="text" id="natoA" required />
             </div>
 
             <div class="field">
               <label for="dataNascita">Data di nascita *</label>
-              <input type="date" id="dataNascita" name="dataNascita" required />
+              <input type="date" id="dataNascita" required />
             </div>
 
             <div class="field">
               <label for="residenteIn">Residente in *</label>
-              <input type="text" id="residenteIn" name="residenteIn" required />
+              <input type="text" id="residenteIn" required />
             </div>
 
             <div class="field">
               <label for="provincia">Provincia *</label>
-              <input type="text" id="provincia" name="provincia" maxlength="2" required />
+              <input type="text" id="provincia" maxlength="2" required />
             </div>
 
             <div class="field">
               <label for="via">Via *</label>
-              <input type="text" id="via" name="via" required />
+              <input type="text" id="via" required />
             </div>
 
             <div class="field">
               <label for="civico">N° civico *</label>
-              <input type="text" id="civico" name="civico" required />
+              <input type="text" id="civico" required />
             </div>
 
             <div class="field">
               <label for="telefono">Telefono *</label>
-              <input type="tel" id="telefono" name="telefono" required />
+              <input type="tel" id="telefono" required />
             </div>
 
             <div class="field">
               <label for="email">Email *</label>
-              <input type="email" id="email" name="email" required />
+              <input type="email" id="email" required />
             </div>
 
             <div class="field full">
               <label for="ruolo">Ruolo *</label>
-              <select id="ruolo" name="ruolo" required>
+              <select id="ruolo" required>
                 <option value="">Seleziona ruolo</option>
                 <option value="Giocatore">Giocatore</option>
                 <option value="Allenatore">Allenatore</option>
                 <option value="Dirigente">Dirigente</option>
               </select>
-              <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
             </div>
 
             <div class="field full">
@@ -360,7 +332,7 @@
               <div class="check-row">
                 <input type="checkbox" id="accettazione" required />
                 <label for="accettazione" style="margin:0; font-weight:normal; line-height:1.5;">
-                  Dichiaro che i dati inseriti sono corretti e autorizzo il trattamento degli stessi per la gestione dell’iscrizione al torneo.
+                  Dichiaro che i dati inseriti sono corretti e autorizzo il trattamento dei dati.
                 </label>
               </div>
             </div>
@@ -373,28 +345,21 @@
                   <button type="button" class="btn btn-secondary" id="clearSignatureBtn">Pulisci firma</button>
                 </div>
               </div>
-              <div class="hint">Firma con mouse o dito.</div>
             </div>
           </div>
 
           <div class="submit-wrap">
-            <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">
-              Invia iscrizione
-            </button>
+            <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">Invia iscrizione</button>
           </div>
         </form>
 
         <div id="statusBox" class="status"></div>
-        <div class="footer-note">Powered by GitHub Pages + Google Apps Script</div>
       </div>
     </div>
   </div>
 
   <script>
-    /**
-     * INSERISCI QUI IL TUO URL WEB APP DI APPS SCRIPT
-     */
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
+    const WEB_APP_URL = 'INCOLLA_QUI_URL_WEB_APP_APPS_SCRIPT';
 
     let teamToken = '';
     let teamInfo = null;
@@ -404,6 +369,7 @@
     const teamNameEl = document.getElementById('teamName');
     const statusBox = document.getElementById('statusBox');
     const submitBtn = document.getElementById('submitBtn');
+    const debugToken = document.getElementById('debugToken');
 
     function showStatus(type, message) {
       statusBox.className = 'status ' + type;
@@ -413,9 +379,9 @@
     function getTokenFromUrl() {
       const params = new URLSearchParams(window.location.search);
       return (
+        params.get('token_form') ||
         params.get('token') ||
         params.get('t') ||
-        params.get('team') ||
         ''
       ).trim();
     }
@@ -433,39 +399,41 @@
 
       try {
         return JSON.parse(text);
-      } catch (err) {
+      } catch (e) {
         throw new Error('Risposta backend non valida: ' + text);
       }
     }
 
     async function loadTeamInfo() {
       teamToken = getTokenFromUrl();
+      debugToken.textContent = teamToken ? ('Token letto dal link: ' + teamToken) : 'Nessun token nel link';
 
       if (!teamToken) {
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Token squadra mancante';
-        showStatus('err', 'Link non valido: token squadra assente.');
+        showStatus('err', 'Nel link non è presente il token.');
         return;
       }
 
       try {
         const data = await postJson({
           action: 'getTeamInfo',
-          token: teamToken
+          token: teamToken,
+          token_form: teamToken
         });
 
         if (!data.ok) {
-          throw new Error(data.error || 'Squadra non valida');
+          throw new Error(data.error || 'Squadra mancante');
         }
 
         teamInfo = data;
-        teamNameEl.textContent = data.team_name || data.teamName || 'Squadra';
+        teamNameEl.textContent = data.team_name || data.teamName || data.sheet_name || 'Squadra';
         loadingBox.style.display = 'none';
         form.style.display = 'block';
       } catch (err) {
         loadingBox.style.display = 'none';
-        teamNameEl.textContent = 'Squadra non disponibile';
-        showStatus('err', err.message || 'Errore nel recupero squadra');
+        teamNameEl.textContent = 'Squadra non trovata';
+        showStatus('err', err.message || 'Errore recupero squadra');
       }
     }
 
@@ -480,6 +448,7 @@
         const rect = canvas.getBoundingClientRect();
         canvas.width = rect.width * ratio;
         canvas.height = rect.height * ratio;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(ratio, ratio);
         ctx.lineWidth = 2.2;
         ctx.lineCap = 'round';
@@ -487,17 +456,6 @@
       }
 
       resizeCanvas();
-      window.addEventListener('resize', () => {
-        const saved = hasSignature ? canvas.toDataURL('image/png') : null;
-        resizeCanvas();
-        if (saved) {
-          const img = new Image();
-          img.onload = () => {
-            ctx.drawImage(img, 0, 0, canvas.clientWidth, canvas.clientHeight);
-          };
-          img.src = saved;
-        }
-      });
 
       function getPos(e) {
         const rect = canvas.getBoundingClientRect();
@@ -548,14 +506,6 @@
       };
     }
 
-    function formatTodayIT() {
-      const d = new Date();
-      const gg = String(d.getDate()).padStart(2, '0');
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const yyyy = d.getFullYear();
-      return `${gg}/${mm}/${yyyy}`;
-    }
-
     async function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -565,9 +515,16 @@
       });
     }
 
+    function formatTodayIT() {
+      const d = new Date();
+      const gg = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const yyyy = d.getFullYear();
+      return `${gg}/${mm}/${yyyy}`;
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      statusBox.style.display = 'none';
 
       const signatureDataUrl = window.getSignatureDataUrl();
       if (!signatureDataUrl) {
@@ -579,7 +536,7 @@
       const visitaFile = document.getElementById('visitaSportiva').files[0];
 
       if (!docFile || !visitaFile) {
-        showStatus('err', 'Carica entrambe le immagini richieste.');
+        showStatus('err', 'Carica entrambi gli allegati.');
         return;
       }
 
@@ -590,6 +547,7 @@
         const payload = {
           action: 'submitRegistration',
           token: teamToken,
+          token_form: teamToken,
           team_code: teamInfo?.team_code || '',
           team_name: teamInfo?.team_name || '',
           today: formatTodayIT(),
@@ -624,12 +582,7 @@
 
         form.reset();
         document.getElementById('clearSignatureBtn').click();
-
-        showStatus(
-          'ok',
-          'Iscrizione inviata correttamente.' +
-          (result.pdf_url ? '<br><br><b>PDF generato:</b> ' + result.pdf_url : '')
-        );
+        showStatus('ok', 'Iscrizione inviata correttamente.');
       } catch (err) {
         showStatus('err', err.message || 'Errore durante l’invio');
       } finally {
