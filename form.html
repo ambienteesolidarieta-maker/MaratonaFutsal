@@ -251,6 +251,8 @@
       display: none;
       font-size: 14px;
       line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .status.ok {
@@ -381,7 +383,7 @@
 
             <div class="field full">
               <label for="visitaSportiva">Foto visita sportiva *</label>
-              <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
+              <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
             </div>
 
             <div class="field full">
@@ -477,7 +479,7 @@
         try {
           return JSON.parse(text);
         } catch (e) {
-          throw new Error('Risposta backend non valida');
+          throw new Error('Risposta backend non valida: ' + text.slice(0, 200));
         }
       } catch (err) {
         if (err.name === 'AbortError') {
@@ -559,73 +561,84 @@
     function setupSignatureCanvas() {
       const canvas = document.getElementById('signatureCanvas');
       const ctx = canvas.getContext('2d');
+
       let drawing = false;
       let hasSignature = false;
+
+      function initContext() {
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#111';
+      }
 
       function resizeCanvas() {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * ratio;
-        canvas.height = rect.height * ratio;
+
+        canvas.width = Math.floor(rect.width * ratio);
+        canvas.height = Math.floor(rect.height * ratio);
+
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(ratio, ratio);
-        ctx.lineWidth = 2.2;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = '#111';
+        initContext();
       }
-
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
 
       function getPos(e) {
         const rect = canvas.getBoundingClientRect();
-        const point = e.touches ? e.touches[0] : e;
         return {
-          x: point.clientX - rect.left,
-          y: point.clientY - rect.top
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
         };
       }
 
       function startDraw(e) {
         drawing = true;
         hasSignature = true;
+
         const pos = getPos(e);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
+
+        if (canvas.setPointerCapture && e.pointerId != null) {
+          canvas.setPointerCapture(e.pointerId);
+        }
+
+        e.preventDefault();
       }
 
       function moveDraw(e) {
         if (!drawing) return;
+
         const pos = getPos(e);
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
+
+        e.preventDefault();
       }
 
-      function endDraw() {
+      function endDraw(e) {
         drawing = false;
+
+        if (canvas.releasePointerCapture && e.pointerId != null) {
+          try {
+            canvas.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+        }
       }
 
-      canvas.addEventListener('mousedown', startDraw);
-      canvas.addEventListener('mousemove', moveDraw);
-      canvas.addEventListener('mouseup', endDraw);
-      canvas.addEventListener('mouseleave', endDraw);
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
 
-      canvas.addEventListener('touchstart', function(e) {
-        startDraw(e);
-        e.preventDefault();
-      }, { passive: false });
-
-      canvas.addEventListener('touchmove', function(e) {
-        moveDraw(e);
-        e.preventDefault();
-      }, { passive: false });
-
-      canvas.addEventListener('touchend', function() {
-        endDraw();
-      });
+      canvas.addEventListener('pointerdown', startDraw);
+      canvas.addEventListener('pointermove', moveDraw);
+      canvas.addEventListener('pointerup', endDraw);
+      canvas.addEventListener('pointercancel', endDraw);
+      canvas.addEventListener('pointerleave', endDraw);
 
       document.getElementById('clearSignatureBtn').addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        initContext();
         hasSignature = false;
       });
 
@@ -661,18 +674,20 @@
         return;
       }
 
-      const docFile = document.getElementById('docIdentita').files[0];
-      const visitaFile = document.getElementById('visitaSportiva').files[0];
-
-      if (!docFile || !visitaFile) {
-        showStatus('err', 'Carica entrambi gli allegati.');
-        return;
-      }
-
       submitBtn.disabled = true;
       submitBtn.textContent = 'Invio in corso...';
 
       try {
+        const docInput = document.getElementById('docIdentita');
+        const visitaInput = document.getElementById('visitaSportiva');
+
+        const docFile = docInput && docInput.files ? docInput.files[0] : null;
+        const visitaFile = visitaInput && visitaInput.files ? visitaInput.files[0] : null;
+
+        if (!docFile || !visitaFile) {
+          throw new Error('Carica entrambi gli allegati.');
+        }
+
         const payload = {
           action: 'submitRegistration',
           team_code: teamInfo?.team_code || teamCodeFromUrl,
