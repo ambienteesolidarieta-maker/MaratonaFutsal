@@ -16,7 +16,10 @@
       --shadow:0 20px 60px rgba(0,0,0,.45);
     }
 
-    *{box-sizing:border-box}
+    *{
+      box-sizing:border-box;
+    }
+
     html,body{
       margin:0;
       padding:0;
@@ -56,7 +59,7 @@
       padding:40px 24px;
       border:1px solid var(--border);
       background:var(--card);
-      backdrop-filter: blur(18px);
+      backdrop-filter:blur(18px);
       border-radius:28px;
       box-shadow:var(--shadow);
       animation:fadeIn .9s ease;
@@ -66,8 +69,9 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      min-height:220px;
-      transition:opacity 1.1s ease, transform 1.1s ease;
+      min-height:320px;
+      width:100%;
+      transition:opacity 1.8s ease, transform 1.8s ease;
     }
 
     .logo-stage.hide{
@@ -77,17 +81,17 @@
     }
 
     .logo{
-      max-width:300px;
-      max-height:220px;
-      width:auto;
+      max-width:520px;
+      max-height:320px;
+      width:100%;
       height:auto;
       object-fit:contain;
       filter:drop-shadow(0 12px 28px rgba(0,0,0,.45));
     }
 
     .fallback-logo{
-      width:220px;
-      height:220px;
+      width:260px;
+      height:260px;
       border-radius:24px;
       border:1px solid rgba(255,255,255,.15);
       display:flex;
@@ -103,7 +107,7 @@
     .content{
       opacity:0;
       transform:translateY(18px);
-      transition:opacity 1s ease, transform 1s ease;
+      transition:opacity 1.4s ease, transform 1.4s ease;
       pointer-events:none;
     }
 
@@ -163,8 +167,41 @@
     }
 
     @keyframes fadeIn{
-      from{opacity:0; transform:translateY(18px)}
-      to{opacity:1; transform:translateY(0)}
+      from{
+        opacity:0;
+        transform:translateY(18px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    @media (max-width: 640px){
+      .hero{
+        min-height:78vh;
+        padding:28px 18px;
+      }
+
+      .logo-stage{
+        min-height:240px;
+      }
+
+      .logo{
+        max-width:400px;
+        max-height:240px;
+      }
+
+      .fallback-logo{
+        width:200px;
+        height:200px;
+        font-size:24px;
+      }
+
+      .cta{
+        width:100%;
+        max-width:320px;
+      }
     }
   </style>
 </head>
@@ -172,14 +209,13 @@
   <div class="wrap">
     <section class="hero">
       <div id="logoStage" class="logo-stage">
-        <!-- SOSTITUISCI LOGO_URL con il link diretto del file immagine -->
         <img
-  id="logoImg"
-  class="logo"
-  src="logomar.jpeg"
-  alt="Logo"
-  onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';"
-/>
+          id="logoImg"
+          class="logo"
+          src="logomar.jpeg"
+          alt="Logo"
+          onerror="this.style.display='none'; document.getElementById('fallbackLogo').style.display='flex';"
+        />
         <div id="fallbackLogo" class="fallback-logo" style="display:none;">
           LOGO
         </div>
@@ -217,11 +253,11 @@
 
       setTimeout(() => {
         logoStage.classList.add('hide');
-      }, 1800);
+      }, 2600);
 
       setTimeout(() => {
         content.classList.add('show');
-      }, 2400);
+      }, 3600);
     });
   </script>
 </body>
