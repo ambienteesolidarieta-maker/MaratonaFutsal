@@ -22,13 +22,25 @@
 
     * { box-sizing: border-box; }
 
-    body {
+    html, body {
       margin: 0;
+      min-height: 100%;
       font-family: Arial, Helvetica, sans-serif;
       background:
         radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
         linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
       color: var(--text);
+    }
+
+    body.app-ready #splashScreen {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    body.app-ready #appRoot {
+      opacity: 1;
+      transform: none;
     }
 
     a {
@@ -42,6 +54,68 @@
 
     button {
       font-family: inherit;
+    }
+
+    #splashScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top, rgba(240,193,75,0.13), transparent 30%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    .splash-inner {
+      text-align: center;
+      padding: 24px;
+      animation: splashPulse 1.8s ease-in-out infinite;
+    }
+
+    .splash-logo {
+      width: min(36vw, 170px);
+      max-width: 170px;
+      min-width: 90px;
+      height: auto;
+      display: block;
+      margin: 0 auto 18px;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    .splash-title {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+
+    .splash-sub {
+      margin-top: 10px;
+      color: var(--accent-2);
+      font-size: 14px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .splash-loader {
+      width: 56px;
+      height: 56px;
+      margin: 22px auto 0;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.10);
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+    }
+
+    #appRoot {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
     }
 
     .wrap {
@@ -249,6 +323,16 @@
       pointer-events: none;
     }
 
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes splashPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.025); }
+      100% { transform: scale(1); }
+    }
+
     @media (max-width: 900px) {
       .summary-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -259,73 +343,84 @@
       h1 { font-size: 22px; }
       .team-name { font-size: 17px; }
       .body { padding: 16px; }
-      .summary-grid {
-        grid-template-columns: 1fr 1fr;
-      }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .splash-logo { width: min(44vw, 150px); }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="hero">
-        <img src="logomar.jpeg" alt="Logo" />
-        <h1>Recap Squadra</h1>
-        <div id="teamName" class="team-name">Caricamento squadra...</div>
-        <div class="sub">Vista dedicata al dirigente</div>
-      </div>
+  <div id="splashScreen">
+    <div class="splash-inner">
+      <img src="logomar.jpeg" alt="Logo Maratona Futsal" class="splash-logo" />
+      <h2 class="splash-title">Maratona Futsal</h2>
+      <div class="splash-sub">Montaione 2026</div>
+      <div class="splash-loader"></div>
+    </div>
+  </div>
 
-      <div class="body">
-        <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
-
-        <div id="contentBox" style="display:none;">
-          <div class="summary-grid">
-            <div class="mini-card">
-              <div class="mini-label">Totale iscritti</div>
-              <div id="totaleIscritti" class="mini-value">0</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-label">Giocatori</div>
-              <div id="totGiocatori" class="mini-value">0</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-label">Allenatori</div>
-              <div id="totAllenatori" class="mini-value">0</div>
-            </div>
-            <div class="mini-card">
-              <div class="mini-label">Dirigenti</div>
-              <div id="totDirigenti" class="mini-value">0</div>
-            </div>
-          </div>
-
-          <div id="emptyBox" class="empty-box">Nessun iscritto presente.</div>
-
-          <div id="tableWrap" class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Cognome</th>
-                  <th>Ruolo</th>
-                  <th>Stato pratica</th>
-                  <th>Documento</th>
-                  <th>Visita</th>
-                  <th>Modulo</th>
-                  <th>Azioni</th>
-                </tr>
-              </thead>
-              <tbody id="rowsBody"></tbody>
-            </table>
-          </div>
+  <div id="appRoot">
+    <div class="wrap">
+      <div class="card">
+        <div class="hero">
+          <img src="logomar.jpeg" alt="Logo" />
+          <h1>Recap Squadra</h1>
+          <div id="teamName" class="team-name">Caricamento squadra...</div>
+          <div class="sub">Vista dedicata al dirigente</div>
         </div>
 
-        <div id="statusBox" class="status"></div>
+        <div class="body">
+          <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
+
+          <div id="contentBox" style="display:none;">
+            <div class="summary-grid">
+              <div class="mini-card">
+                <div class="mini-label">Totale iscritti</div>
+                <div id="totaleIscritti" class="mini-value">0</div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Giocatori</div>
+                <div id="totGiocatori" class="mini-value">0</div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Allenatori</div>
+                <div id="totAllenatori" class="mini-value">0</div>
+              </div>
+              <div class="mini-card">
+                <div class="mini-label">Dirigenti</div>
+                <div id="totDirigenti" class="mini-value">0</div>
+              </div>
+            </div>
+
+            <div id="emptyBox" class="empty-box">Nessun iscritto presente.</div>
+
+            <div id="tableWrap" class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Cognome</th>
+                    <th>Ruolo</th>
+                    <th>Stato pratica</th>
+                    <th>Documento</th>
+                    <th>Visita</th>
+                    <th>Modulo</th>
+                    <th>Azioni</th>
+                  </tr>
+                </thead>
+                <tbody id="rowsBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="statusBox" class="status"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
+    const SPLASH_MIN_MS = 1400;
 
     const loadingBox = document.getElementById('loadingBox');
     const contentBox = document.getElementById('contentBox');
@@ -335,11 +430,22 @@
     const emptyBox = document.getElementById('emptyBox');
     const tableWrap = document.getElementById('tableWrap');
 
+    const splashStartedAt = Date.now();
+
     let currentRows = [];
     let currentCounters = {};
     let currentTeamCode = '';
     let currentToken = '';
     let currentTeamName = '';
+
+    function showAppAfterSplash() {
+      const elapsed = Date.now() - splashStartedAt;
+      const wait = Math.max(SPLASH_MIN_MS - elapsed, 0);
+
+      setTimeout(() => {
+        document.body.classList.add('app-ready');
+      }, wait);
+    }
 
     function showStatus(type, message) {
       statusBox.className = 'status ' + type;
@@ -474,14 +580,15 @@
 
       const nome = [row.nome || '', row.cognome || ''].join(' ').trim() || 'questo iscritto';
 
-      const conferma = confirm(
-        `Confermi l'eliminazione di ${nome}?\n\n` +
-        `Verranno eliminati:\n` +
-        `- il record dell'iscrizione\n` +
-        `- il modulo generato\n` +
-        `- la foto del documento\n` +
-        `- la foto della visita sportiva`
-      );
+      const conferma =
+        confirm(
+          `Confermi l'eliminazione di ${nome}?\n\n` +
+          `Verranno eliminati:\n` +
+          `- il record dell'iscrizione\n` +
+          `- il modulo generato\n` +
+          `- la foto del documento\n` +
+          `- la foto della visita sportiva`
+        );
 
       if (!conferma) return;
 
@@ -546,6 +653,7 @@
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Team mancante';
         showStatus('err', 'Nel link manca il parametro team.');
+        showAppAfterSplash();
         return;
       }
 
@@ -553,6 +661,7 @@
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Token mancante';
         showStatus('err', 'Nel link manca il token.');
+        showAppAfterSplash();
         return;
       }
 
@@ -581,6 +690,8 @@
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Squadra non disponibile';
         showStatus('err', err.message || 'Errore caricamento vista squadra');
+      } finally {
+        showAppAfterSplash();
       }
     }
 
