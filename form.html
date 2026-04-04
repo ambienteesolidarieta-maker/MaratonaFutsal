@@ -39,6 +39,17 @@
       overflow: hidden;
     }
 
+    body.app-ready #splashScreen {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    body.app-ready #appRoot {
+      opacity: 1;
+      transform: none;
+    }
+
     a {
       color: var(--accent-2);
       text-decoration: none;
@@ -46,6 +57,113 @@
 
     a:hover {
       text-decoration: underline;
+    }
+
+    #splashScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(240,193,75,0.20), transparent 28%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04), transparent 42%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    #splashScreen::before,
+    #splashScreen::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(14px);
+      pointer-events: none;
+    }
+
+    #splashScreen::before {
+      width: 300px;
+      height: 300px;
+      background: rgba(240,193,75,0.10);
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #splashScreen::after {
+      width: 420px;
+      height: 420px;
+      border: 1px solid rgba(255,255,255,0.05);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .splash-inner {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 34px 26px 30px;
+      min-width: min(92vw, 420px);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow:
+        0 24px 70px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      animation: splashFloat 2.2s ease-in-out infinite;
+    }
+
+    .splash-logo {
+      width: min(42vw, 210px);
+      max-width: 210px;
+      min-width: 115px;
+      height: auto;
+      display: block;
+      margin: 0 auto 20px;
+      border-radius: 22px;
+      box-shadow:
+        0 22px 50px rgba(0,0,0,0.40),
+        0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    .splash-title {
+      margin: 0;
+      font-size: clamp(28px, 4.8vw, 46px);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.4px;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.30);
+    }
+
+    .splash-sub {
+      margin-top: 10px;
+      color: var(--accent-2);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .splash-loader {
+      width: 64px;
+      height: 64px;
+      margin: 24px auto 0;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.10);
+      border-top-color: var(--accent);
+      border-right-color: rgba(255,221,120,0.65);
+      box-shadow: 0 0 24px rgba(240,193,75,0.12);
+      animation: spin 1s linear infinite;
+    }
+
+    #appRoot {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
     }
 
     .wrap {
@@ -357,6 +475,9 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      background:
+        radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
+        linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
     }
 
     .success-card {
@@ -402,6 +523,12 @@
       to { transform: rotate(360deg); }
     }
 
+    @keyframes splashFloat {
+      0% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.01); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
     @media (max-width: 700px) {
       .grid {
         grid-template-columns: 1fr;
@@ -418,132 +545,147 @@
       .body {
         padding: 16px;
       }
+
+      .splash-logo {
+        width: min(52vw, 170px);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <div class="hero">
-        <img src="logomar.jpeg" alt="Logo" />
-        <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
-        <div id="teamName" class="team-name">Caricamento squadra...</div>
-        <div class="sub">Compila tutti i campi richiesti</div>
-      </div>
+  <div id="splashScreen">
+    <div class="splash-inner">
+      <img src="logomar.jpeg" alt="Logo Maratona Futsal" class="splash-logo" />
+      <h2 class="splash-title">Maratona Futsal</h2>
+      <div class="splash-sub">Modulo Iscrizione · Montaione 2026</div>
+      <div class="splash-loader"></div>
+    </div>
+  </div>
 
-      <div class="body">
-        <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
-
-        <div id="rolesBox" class="roles-box">
-          <div class="roles-title">Disponibilità ruoli</div>
-          <div id="rolesList" class="roles-list"></div>
+  <div id="appRoot">
+    <div class="wrap">
+      <div class="card">
+        <div class="hero">
+          <img src="logomar.jpeg" alt="Logo" />
+          <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
+          <div id="teamName" class="team-name">Caricamento squadra...</div>
+          <div class="sub">Compila tutti i campi richiesti</div>
         </div>
 
-        <form id="registrationForm" style="display:none;">
-          <div class="grid">
-            <div class="field">
-              <label for="nome">Nome *</label>
-              <input type="text" id="nome" required />
-            </div>
+        <div class="body">
+          <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
 
-            <div class="field">
-              <label for="cognome">Cognome *</label>
-              <input type="text" id="cognome" required />
-            </div>
+          <div id="rolesBox" class="roles-box">
+            <div class="roles-title">Disponibilità ruoli</div>
+            <div id="rolesList" class="roles-list"></div>
+          </div>
 
-            <div class="field">
-              <label for="natoA">Nato a *</label>
-              <input type="text" id="natoA" required />
-            </div>
-
-            <div class="field">
-              <label for="dataNascita">Data di nascita *</label>
-              <input type="date" id="dataNascita" required />
-            </div>
-
-            <div class="field">
-              <label for="residenteIn">Residente in *</label>
-              <input type="text" id="residenteIn" required />
-            </div>
-
-            <div class="field">
-              <label for="provincia">Provincia *</label>
-              <input type="text" id="provincia" maxlength="2" required />
-            </div>
-
-            <div class="field">
-              <label for="via">Via *</label>
-              <input type="text" id="via" required />
-            </div>
-
-            <div class="field">
-              <label for="civico">N° civico *</label>
-              <input type="text" id="civico" required />
-            </div>
-
-            <div class="field">
-              <label for="telefono">Telefono *</label>
-              <input type="tel" id="telefono" required />
-            </div>
-
-            <div class="field">
-              <label for="email">Email *</label>
-              <input type="email" id="email" required />
-            </div>
-
-            <div class="field full">
-              <label for="ruolo">Ruolo *</label>
-              <select id="ruolo" required>
-                <option value="">Seleziona ruolo</option>
-                <option value="Giocatore">Giocatore</option>
-                <option value="Allenatore">Allenatore</option>
-                <option value="Dirigente">Dirigente</option>
-              </select>
-              <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
-            </div>
-
-            <div class="field full">
-              <label for="docIdentita">Foto documento identità *</label>
-              <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
-            </div>
-
-            <div class="field full">
-              <label for="visitaSportiva">Foto visita sportiva *</label>
-              <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
-            </div>
-
-            <div class="field full">
-              <label>Accettazione documenti *</label>
-              <div class="check-row">
-                <input type="checkbox" id="accettazione" required />
-                <label for="accettazione" class="check-text">
-                  Dichiaro di aver letto e di accettare il
-                  <a href="#" target="_blank" rel="noopener noreferrer">regolamento</a>,
-                  la
-                  <a href="#" target="_blank" rel="noopener noreferrer">dichiarazione di responsabilità</a>
-                  e i termini della
-                  <a href="#" target="_blank" rel="noopener noreferrer">liberatoria</a>.
-                </label>
+          <form id="registrationForm" style="display:none;">
+            <div class="grid">
+              <div class="field">
+                <label for="nome">Nome *</label>
+                <input type="text" id="nome" required />
               </div>
-            </div>
 
-            <div class="field full">
-              <label>Firma grafica *</label>
-              <div class="sig-box">
-                <canvas id="signatureCanvas"></canvas>
-                <div class="sig-actions">
-                  <button type="button" class="btn btn-secondary" id="clearSignatureBtn">Pulisci firma</button>
+              <div class="field">
+                <label for="cognome">Cognome *</label>
+                <input type="text" id="cognome" required />
+              </div>
+
+              <div class="field">
+                <label for="natoA">Nato a *</label>
+                <input type="text" id="natoA" required />
+              </div>
+
+              <div class="field">
+                <label for="dataNascita">Data di nascita *</label>
+                <input type="date" id="dataNascita" required />
+              </div>
+
+              <div class="field">
+                <label for="residenteIn">Residente in *</label>
+                <input type="text" id="residenteIn" required />
+              </div>
+
+              <div class="field">
+                <label for="provincia">Provincia *</label>
+                <input type="text" id="provincia" maxlength="2" required />
+              </div>
+
+              <div class="field">
+                <label for="via">Via *</label>
+                <input type="text" id="via" required />
+              </div>
+
+              <div class="field">
+                <label for="civico">N° civico *</label>
+                <input type="text" id="civico" required />
+              </div>
+
+              <div class="field">
+                <label for="telefono">Telefono *</label>
+                <input type="tel" id="telefono" required />
+              </div>
+
+              <div class="field">
+                <label for="email">Email *</label>
+                <input type="email" id="email" required />
+              </div>
+
+              <div class="field full">
+                <label for="ruolo">Ruolo *</label>
+                <select id="ruolo" required>
+                  <option value="">Seleziona ruolo</option>
+                  <option value="Giocatore">Giocatore</option>
+                  <option value="Allenatore">Allenatore</option>
+                  <option value="Dirigente">Dirigente</option>
+                </select>
+                <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
+              </div>
+
+              <div class="field full">
+                <label for="docIdentita">Foto documento identità *</label>
+                <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
+              </div>
+
+              <div class="field full">
+                <label for="visitaSportiva">Foto visita sportiva *</label>
+                <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
+              </div>
+
+              <div class="field full">
+                <label>Accettazione documenti *</label>
+                <div class="check-row">
+                  <input type="checkbox" id="accettazione" required />
+                  <label for="accettazione" class="check-text">
+                    Dichiaro di aver letto e di accettare il
+                    <a href="#" target="_blank" rel="noopener noreferrer">regolamento</a>,
+                    la
+                    <a href="#" target="_blank" rel="noopener noreferrer">dichiarazione di responsabilità</a>
+                    e i termini della
+                    <a href="#" target="_blank" rel="noopener noreferrer">liberatoria</a>.
+                  </label>
+                </div>
+              </div>
+
+              <div class="field full">
+                <label>Firma grafica *</label>
+                <div class="sig-box">
+                  <canvas id="signatureCanvas"></canvas>
+                  <div class="sig-actions">
+                    <button type="button" class="btn btn-secondary" id="clearSignatureBtn">Pulisci firma</button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="submit-wrap">
-            <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">Invia iscrizione</button>
-          </div>
-        </form>
+            <div class="submit-wrap">
+              <button type="submit" class="btn btn-primary submit-btn" id="submitBtn">Invia iscrizione</button>
+            </div>
+          </form>
 
-        <div id="statusBox" class="status"></div>
+          <div id="statusBox" class="status"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -558,6 +700,7 @@
 
   <script>
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwllcWP71siN-WNLJuel5cMqWudOQj75A5Oiy1csfwfhCb_8LlGNHys1a2Bcnm80te2/exec';
+    const SPLASH_MIN_MS = 1400;
 
     let teamToken = '';
     let teamCodeFromUrl = '';
@@ -572,6 +715,16 @@
     const rolesList = document.getElementById('rolesList');
     const ruoloSelect = document.getElementById('ruolo');
     const busyOverlay = document.getElementById('busyOverlay');
+    const splashStartedAt = Date.now();
+
+    function showAppAfterSplash() {
+      const elapsed = Date.now() - splashStartedAt;
+      const wait = Math.max(SPLASH_MIN_MS - elapsed, 0);
+
+      setTimeout(() => {
+        document.body.classList.add('app-ready');
+      }, wait);
+    }
 
     function showStatus(type, message) {
       statusBox.className = 'status ' + type;
@@ -700,6 +853,7 @@
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Team mancante';
         showStatus('err', 'Nel link non è presente il parametro team.');
+        showAppAfterSplash();
         return;
       }
 
@@ -707,6 +861,7 @@
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Token mancante';
         showStatus('err', 'Nel link non è presente il token.');
+        showAppAfterSplash();
         return;
       }
 
@@ -737,6 +892,8 @@
         loadingBox.style.display = 'none';
         teamNameEl.textContent = 'Squadra non trovata';
         showStatus('err', err.message || 'Errore recupero squadra');
+      } finally {
+        showAppAfterSplash();
       }
     }
 
