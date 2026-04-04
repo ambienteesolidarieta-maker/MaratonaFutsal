@@ -7,17 +7,26 @@
   <style>
     :root {
       --bg: #0b0f14;
-      --panel: #121821;
+      --bg-2: #0f141c;
+      --panel: rgba(18,24,33,0.92);
       --panel-2: #1a2230;
+      --panel-3: #212b3a;
       --text: #f3f6fb;
       --muted: #9aa4b2;
+      --muted-2: #cfd6df;
       --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.12);
       --accent: #f0c14b;
       --accent-2: #ffdd78;
+      --accent-soft: rgba(240,193,75,0.14);
       --danger: #ff6b6b;
+      --danger-soft: rgba(255,107,107,0.14);
       --ok: #37d67a;
+      --ok-soft: rgba(55,214,122,0.14);
       --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --shadow-2: 0 20px 60px rgba(0,0,0,0.42);
       --radius: 18px;
+      --radius-lg: 24px;
     }
 
     * { box-sizing: border-box; }
@@ -31,6 +40,7 @@
       font-family: Arial, Helvetica, sans-serif;
       background:
         radial-gradient(circle at top, rgba(240,193,75,0.10), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04), transparent 18%),
         linear-gradient(180deg, #0b0f14 0%, #0a0d12 100%);
       color: var(--text);
     }
@@ -106,8 +116,8 @@
       z-index: 2;
       text-align: center;
       padding: 34px 26px 30px;
-      min-width: min(92vw, 420px);
-      border-radius: 28px;
+      min-width: min(92vw, 430px);
+      border-radius: 30px;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
       border: 1px solid rgba(255,255,255,0.08);
       box-shadow:
@@ -123,7 +133,7 @@
       min-width: 115px;
       height: auto;
       display: block;
-      margin: 0 auto 20px;
+      margin: 0 auto 22px;
       border-radius: 22px;
       box-shadow:
         0 22px 50px rgba(0,0,0,0.40),
@@ -132,20 +142,32 @@
 
     .splash-title {
       margin: 0;
-      font-size: clamp(28px, 4.8vw, 46px);
-      font-weight: 800;
+      font-size: clamp(28px, 4.8vw, 44px);
+      font-weight: 900;
       color: #ffffff;
-      letter-spacing: 0.4px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       text-shadow: 0 6px 18px rgba(0,0,0,0.30);
+      line-height: 1.05;
     }
 
     .splash-sub {
       margin-top: 10px;
       color: var(--accent-2);
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 2px;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 1.4px;
       text-transform: uppercase;
+      line-height: 1.15;
+    }
+
+    .splash-mini {
+      margin-top: 8px;
+      color: #d9e0e9;
+      font-size: 13px;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+      opacity: .85;
     }
 
     .splash-loader {
@@ -168,83 +190,250 @@
 
     .wrap {
       width: 100%;
-      max-width: 920px;
+      max-width: 980px;
       margin: 0 auto;
       padding: 24px 16px 60px;
     }
 
     .card {
-      background: rgba(18,24,33,0.92);
+      background: rgba(18,24,33,0.86);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      border-radius: 26px;
+      box-shadow: var(--shadow-2);
       overflow: hidden;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
     .hero {
-      padding: 28px 22px 20px;
+      position: relative;
+      padding: 34px 24px 24px;
       text-align: center;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      background:
+        radial-gradient(circle at top center, rgba(240,193,75,0.14), transparent 36%),
+        linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
       border-bottom: 1px solid var(--line);
     }
 
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto 24px 0 24px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(240,193,75,0.28), transparent);
+    }
+
     .hero img {
-      max-width: 130px;
+      max-width: 132px;
       width: 100%;
       height: auto;
       display: block;
-      margin: 0 auto 14px;
-      border-radius: 16px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+      margin: 0 auto 16px;
+      border-radius: 18px;
+      box-shadow:
+        0 14px 32px rgba(0,0,0,0.28),
+        0 0 0 1px rgba(255,255,255,0.06);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
     }
 
     h1 {
       margin: 0;
-      font-size: 28px;
-      line-height: 1.2;
+      font-size: 30px;
+      line-height: 1.14;
       color: white;
+      letter-spacing: .2px;
     }
 
     .team-name {
-      margin-top: 10px;
-      font-size: 18px;
-      font-weight: bold;
+      margin-top: 12px;
+      font-size: 20px;
+      font-weight: 800;
       color: var(--accent-2);
+      letter-spacing: .2px;
     }
 
     .sub {
-      margin-top: 8px;
+      margin-top: 10px;
       color: var(--muted);
       font-size: 14px;
     }
 
+    .body {
+      padding: 24px;
+    }
+
+    .loader {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 12px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(255,255,255,0.10);
+      border-radius: 16px;
+    }
+
     .roles-box {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 14px;
-      background: var(--panel-2);
+      margin-bottom: 22px;
+      padding: 18px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
       border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
       display: none;
     }
 
+    .roles-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
     .roles-title {
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: #dce3ed;
+      font-size: 15px;
+      font-weight: 800;
+      color: #eef3f9;
+      letter-spacing: .2px;
+    }
+
+    .roles-chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(240,193,75,0.20);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .roles-list {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 6px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
       font-size: 13px;
       color: var(--muted);
     }
 
-    .body {
-      padding: 22px;
+    .role-card {
+      position: relative;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .role-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(240,193,75,0.45), rgba(255,221,120,0.95));
+    }
+
+    .role-card.full-role::before {
+      background: linear-gradient(90deg, rgba(255,107,107,0.55), rgba(255,107,107,0.95));
+    }
+
+    .role-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .role-count {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--accent-2);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .role-card.full-role .role-count {
+      color: #ffd1d1;
+    }
+
+    .role-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      background: var(--ok-soft);
+      border-color: rgba(55,214,122,0.24);
+      color: #baf3cf;
+    }
+
+    .role-card.full-role .role-pill {
+      background: var(--danger-soft);
+      border-color: rgba(255,107,107,0.24);
+      color: #ffd1d1;
+    }
+
+    form {
+      display: none;
+    }
+
+    .section-card {
+      margin-bottom: 22px;
+      padding: 20px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.012));
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #f6f8fb;
+      letter-spacing: .2px;
+    }
+
+    .section-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 16px rgba(240,193,75,0.35);
+      flex: 0 0 auto;
     }
 
     .grid {
@@ -260,75 +449,95 @@
     .field label {
       display: block;
       margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 800;
       color: #dce3ed;
+      letter-spacing: .2px;
     }
 
     .field input,
     .field select {
       width: 100%;
-      padding: 14px 14px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: var(--panel-2);
+      padding: 15px 15px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.018));
       color: white;
       outline: none;
       font-size: 16px;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .field input:hover,
+    .field select:hover {
+      border-color: rgba(255,255,255,0.14);
     }
 
     .field input:focus,
     .field select:focus {
       border-color: rgba(240,193,75,0.55);
       box-shadow: 0 0 0 3px rgba(240,193,75,0.12);
+      transform: translateY(-1px);
+    }
+
+    .field input::placeholder {
+      color: #8e98a6;
     }
 
     .field input[type="file"] {
       padding: 12px;
+      background: rgba(255,255,255,0.025);
     }
 
     .hint {
-      margin-top: 6px;
+      margin-top: 7px;
       font-size: 12px;
       color: var(--muted);
+      line-height: 1.45;
     }
 
     .check-row {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      padding: 14px;
-      border-radius: 14px;
-      background: var(--panel-2);
+      gap: 12px;
+      padding: 16px;
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.015));
       border: 1px solid var(--line);
     }
 
     .check-row input[type="checkbox"] {
-      margin-top: 3px;
+      margin-top: 4px;
       transform: scale(1.15);
       width: auto;
       flex: 0 0 auto;
+      accent-color: var(--accent);
     }
 
     .check-text {
       margin: 0;
       font-weight: normal;
-      line-height: 1.6;
+      line-height: 1.65;
       color: var(--text);
+      font-size: 14px;
     }
 
     .sig-box {
       background: #fff;
-      border-radius: 14px;
+      border-radius: 18px;
       overflow: hidden;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 16px 30px rgba(0,0,0,0.22);
     }
 
     #signatureCanvas {
       display: block;
       width: 100%;
       height: 220px;
-      background: #fff;
+      background:
+        linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%);
       cursor: crosshair;
       user-select: none;
       -webkit-user-select: none;
@@ -346,12 +555,12 @@
     .btn {
       appearance: none;
       border: 0;
-      border-radius: 12px;
+      border-radius: 13px;
       padding: 12px 16px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 800;
       font-size: 14px;
-      transition: transform .15s ease, opacity .15s ease;
+      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
     }
 
     .btn:hover {
@@ -367,6 +576,7 @@
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #161616;
+      box-shadow: 0 12px 24px rgba(240,193,75,0.18);
     }
 
     .btn-secondary {
@@ -378,13 +588,14 @@
     .submit-wrap {
       display: flex;
       justify-content: center;
-      margin-top: 26px;
+      margin-top: 28px;
     }
 
     .submit-btn {
-      min-width: 230px;
-      padding: 16px 22px;
+      min-width: 260px;
+      padding: 17px 22px;
       font-size: 16px;
+      border-radius: 15px;
     }
 
     .status {
@@ -410,13 +621,6 @@
       background: rgba(255,107,107,0.12);
       border: 1px solid rgba(255,107,107,0.25);
       color: #ffd1d1;
-    }
-
-    .loader {
-      text-align: center;
-      color: var(--muted);
-      padding: 24px 10px;
-      font-size: 14px;
     }
 
     .busy-overlay {
@@ -529,25 +733,50 @@
       100% { transform: translateY(0) scale(1); }
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 760px) {
       .grid {
         grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: 22px;
-      }
-
-      .team-name {
-        font-size: 17px;
+      .roles-list {
+        grid-template-columns: 1fr;
       }
 
       .body {
         padding: 16px;
       }
 
+      .hero {
+        padding: 28px 18px 20px;
+      }
+
+      h1 {
+        font-size: 23px;
+      }
+
+      .team-name {
+        font-size: 17px;
+      }
+
+      .section-card {
+        padding: 16px;
+      }
+
       .splash-logo {
         width: min(52vw, 170px);
+      }
+
+      .splash-title {
+        font-size: clamp(26px, 7vw, 38px);
+      }
+
+      .splash-sub {
+        font-size: 16px;
+      }
+
+      .submit-btn {
+        width: 100%;
+        min-width: 0;
       }
     }
   </style>
@@ -556,8 +785,9 @@
   <div id="splashScreen">
     <div class="splash-inner">
       <img src="logomar.jpeg" alt="Logo Maratona Futsal" class="splash-logo" />
-      <h2 class="splash-title">Maratona Futsal</h2>
-      <div class="splash-sub">Modulo Iscrizione · Montaione 2026</div>
+      <h2 class="splash-title">MARATONA FUTSAL</h2>
+      <div class="splash-sub">MONTAIONE 2026</div>
+      <div class="splash-mini">MODULO ISCRIZIONE</div>
       <div class="splash-loader"></div>
     </div>
   </div>
@@ -566,114 +796,143 @@
     <div class="wrap">
       <div class="card">
         <div class="hero">
+          <div class="hero-badge">Maratona Futsal • Iscrizione ufficiale</div>
           <img src="logomar.jpeg" alt="Logo" />
           <h1>Modulo Iscrizione Maratona Futsal Montaione 2026</h1>
           <div id="teamName" class="team-name">Caricamento squadra...</div>
-          <div class="sub">Compila tutti i campi richiesti</div>
+          <div class="sub">Compila tutti i campi richiesti per completare l’iscrizione</div>
         </div>
 
         <div class="body">
           <div id="loadingBox" class="loader">Caricamento dati squadra...</div>
 
           <div id="rolesBox" class="roles-box">
-            <div class="roles-title">Disponibilità ruoli</div>
+            <div class="roles-head">
+              <div class="roles-title">Disponibilità ruoli squadra</div>
+              <div class="roles-chip">Aggiornamento live</div>
+            </div>
             <div id="rolesList" class="roles-list"></div>
           </div>
 
           <form id="registrationForm" style="display:none;">
-            <div class="grid">
-              <div class="field">
-                <label for="nome">Nome *</label>
-                <input type="text" id="nome" required />
+            <div class="section-card">
+              <div class="section-title">
+                <span class="section-dot"></span>
+                Dati anagrafici
               </div>
 
-              <div class="field">
-                <label for="cognome">Cognome *</label>
-                <input type="text" id="cognome" required />
-              </div>
+              <div class="grid">
+                <div class="field">
+                  <label for="nome">Nome *</label>
+                  <input type="text" id="nome" required />
+                </div>
 
-              <div class="field">
-                <label for="natoA">Nato a *</label>
-                <input type="text" id="natoA" required />
-              </div>
+                <div class="field">
+                  <label for="cognome">Cognome *</label>
+                  <input type="text" id="cognome" required />
+                </div>
 
-              <div class="field">
-                <label for="dataNascita">Data di nascita *</label>
-                <input type="date" id="dataNascita" required />
-              </div>
+                <div class="field">
+                  <label for="natoA">Nato a *</label>
+                  <input type="text" id="natoA" required />
+                </div>
 
-              <div class="field">
-                <label for="residenteIn">Residente in *</label>
-                <input type="text" id="residenteIn" required />
-              </div>
+                <div class="field">
+                  <label for="dataNascita">Data di nascita *</label>
+                  <input type="date" id="dataNascita" required />
+                </div>
 
-              <div class="field">
-                <label for="provincia">Provincia *</label>
-                <input type="text" id="provincia" maxlength="2" required />
-              </div>
+                <div class="field">
+                  <label for="residenteIn">Residente in *</label>
+                  <input type="text" id="residenteIn" required />
+                </div>
 
-              <div class="field">
-                <label for="via">Via *</label>
-                <input type="text" id="via" required />
-              </div>
+                <div class="field">
+                  <label for="provincia">Provincia *</label>
+                  <input type="text" id="provincia" maxlength="2" required />
+                </div>
 
-              <div class="field">
-                <label for="civico">N° civico *</label>
-                <input type="text" id="civico" required />
-              </div>
+                <div class="field">
+                  <label for="via">Via *</label>
+                  <input type="text" id="via" required />
+                </div>
 
-              <div class="field">
-                <label for="telefono">Telefono *</label>
-                <input type="tel" id="telefono" required />
-              </div>
+                <div class="field">
+                  <label for="civico">N° civico *</label>
+                  <input type="text" id="civico" required />
+                </div>
 
-              <div class="field">
-                <label for="email">Email *</label>
-                <input type="email" id="email" required />
-              </div>
+                <div class="field">
+                  <label for="telefono">Telefono *</label>
+                  <input type="tel" id="telefono" required />
+                </div>
 
-              <div class="field full">
-                <label for="ruolo">Ruolo *</label>
-                <select id="ruolo" required>
-                  <option value="">Seleziona ruolo</option>
-                  <option value="Giocatore">Giocatore</option>
-                  <option value="Allenatore">Allenatore</option>
-                  <option value="Dirigente">Dirigente</option>
-                </select>
-                <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
-              </div>
+                <div class="field">
+                  <label for="email">Email *</label>
+                  <input type="email" id="email" required />
+                </div>
 
-              <div class="field full">
-                <label for="docIdentita">Foto documento identità *</label>
-                <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
-              </div>
-
-              <div class="field full">
-                <label for="visitaSportiva">Foto visita sportiva *</label>
-                <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
-              </div>
-
-              <div class="field full">
-                <label>Accettazione documenti *</label>
-                <div class="check-row">
-                  <input type="checkbox" id="accettazione" required />
-                  <label for="accettazione" class="check-text">
-                    Dichiaro di aver letto e di accettare il
-                    <a href="#" target="_blank" rel="noopener noreferrer">regolamento</a>,
-                    la
-                    <a href="#" target="_blank" rel="noopener noreferrer">dichiarazione di responsabilità</a>
-                    e i termini della
-                    <a href="#" target="_blank" rel="noopener noreferrer">liberatoria</a>.
-                  </label>
+                <div class="field full">
+                  <label for="ruolo">Ruolo *</label>
+                  <select id="ruolo" required>
+                    <option value="">Seleziona ruolo</option>
+                    <option value="Giocatore">Giocatore</option>
+                    <option value="Allenatore">Allenatore</option>
+                    <option value="Dirigente">Dirigente</option>
+                  </select>
+                  <div class="hint">Limiti: Giocatore max 15, Allenatore max 1, Dirigente max 1.</div>
                 </div>
               </div>
+            </div>
 
-              <div class="field full">
-                <label>Firma grafica *</label>
-                <div class="sig-box">
-                  <canvas id="signatureCanvas"></canvas>
-                  <div class="sig-actions">
-                    <button type="button" class="btn btn-secondary" id="clearSignatureBtn">Pulisci firma</button>
+            <div class="section-card">
+              <div class="section-title">
+                <span class="section-dot"></span>
+                Allegati richiesti
+              </div>
+
+              <div class="grid">
+                <div class="field full">
+                  <label for="docIdentita">Foto documento identità *</label>
+                  <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
+                </div>
+
+                <div class="field full">
+                  <label for="visitaSportiva">Foto visita sportiva *</label>
+                  <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
+                </div>
+              </div>
+            </div>
+
+            <div class="section-card">
+              <div class="section-title">
+                <span class="section-dot"></span>
+                Accettazione e firma
+              </div>
+
+              <div class="grid">
+                <div class="field full">
+                  <label>Accettazione documenti *</label>
+                  <div class="check-row">
+                    <input type="checkbox" id="accettazione" required />
+                    <label for="accettazione" class="check-text">
+                      Dichiaro di aver letto e di accettare il
+                      <a href="#" target="_blank" rel="noopener noreferrer">regolamento</a>,
+                      la
+                      <a href="#" target="_blank" rel="noopener noreferrer">dichiarazione di responsabilità</a>
+                      e i termini della
+                      <a href="#" target="_blank" rel="noopener noreferrer">liberatoria</a>.
+                    </label>
+                  </div>
+                </div>
+
+                <div class="field full">
+                  <label>Firma grafica *</label>
+                  <div class="sig-box">
+                    <canvas id="signatureCanvas"></canvas>
+                    <div class="sig-actions">
+                      <button type="button" class="btn btn-secondary" id="clearSignatureBtn">Pulisci firma</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -831,7 +1090,17 @@
         if (!info) return;
 
         const row = document.createElement('div');
-        row.textContent = `${role}: ${info.current}/${info.max}` + (info.available ? '' : ' - COMPLETO');
+        row.className = 'role-card' + (info.available ? '' : ' full-role');
+
+        const statusLabel = info.available ? 'Disponibile' : 'Completo';
+
+        row.innerHTML = `
+          <div class="role-name">${role}</div>
+          <div class="role-count">${info.current}/${info.max}</div>
+          <div class="role-meta">Posti occupati su disponibili</div>
+          <div class="role-pill">${statusLabel}</div>
+        `;
+
         rolesList.appendChild(row);
       });
 
