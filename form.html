@@ -287,9 +287,9 @@
     }
 
     .roles-box {
-      margin-bottom: 22px;
-      padding: 18px;
-      border-radius: 20px;
+      margin-bottom: 18px;
+      padding: 14px;
+      border-radius: 18px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
       border: 1px solid var(--line);
@@ -301,42 +301,40 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
     }
 
     .roles-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       color: #eef3f9;
       letter-spacing: .2px;
     }
 
     .roles-chip {
-      padding: 7px 12px;
+      padding: 6px 10px;
       border-radius: 999px;
       background: var(--accent-soft);
       border: 1px solid rgba(240,193,75,0.20);
       color: var(--accent-2);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: .8px;
     }
 
     .roles-list {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      font-size: 13px;
-      color: var(--muted);
+      gap: 10px;
     }
 
     .role-card {
       position: relative;
-      padding: 14px;
-      border-radius: 16px;
+      padding: 12px;
+      border-radius: 14px;
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--line);
       overflow: hidden;
@@ -347,7 +345,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      right: 0;
+      width: 100%;
       height: 3px;
       background: linear-gradient(90deg, rgba(240,193,75,0.45), rgba(255,221,120,0.95));
     }
@@ -357,18 +355,25 @@
     }
 
     .role-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       color: #fff;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+    }
+
+    .role-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
     }
 
     .role-count {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
       color: var(--accent-2);
       line-height: 1;
-      margin-bottom: 8px;
     }
 
     .role-card.full-role .role-count {
@@ -376,24 +381,25 @@
     }
 
     .role-meta {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      margin-bottom: 10px;
     }
 
     .role-pill {
       display: inline-flex;
       align-items: center;
-      padding: 6px 10px;
+      justify-content: center;
+      padding: 5px 9px;
       border-radius: 999px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
-      letter-spacing: .8px;
+      letter-spacing: .7px;
       text-transform: uppercase;
       border: 1px solid transparent;
       background: var(--ok-soft);
       border-color: rgba(55,214,122,0.24);
       color: #baf3cf;
+      white-space: nowrap;
     }
 
     .role-card.full-role .role-pill {
@@ -488,6 +494,18 @@
     .field input[type="file"] {
       padding: 12px;
       background: rgba(255,255,255,0.025);
+    }
+
+    .field select {
+      color: #ffffff;
+      background-color: #1a2230;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .field select option {
+      background: #1a2230;
+      color: #ffffff;
     }
 
     .hint {
@@ -740,6 +758,33 @@
 
       .roles-list {
         grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .role-card {
+        padding: 10px 12px;
+      }
+
+      .role-name {
+        margin-bottom: 6px;
+        font-size: 12px;
+      }
+
+      .role-main {
+        margin-bottom: 4px;
+      }
+
+      .role-count {
+        font-size: 18px;
+      }
+
+      .role-pill {
+        font-size: 9px;
+        padding: 4px 8px;
+      }
+
+      .role-meta {
+        font-size: 10px;
       }
 
       .body {
@@ -894,12 +939,14 @@
               <div class="grid">
                 <div class="field full">
                   <label for="docIdentita">Foto documento identità *</label>
-                  <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
+                  <input type="file" id="docIdentita" accept="image/*" required />
+                  <div class="hint">Da smartphone puoi scegliere se scattare una foto o selezionarla dalla galleria.</div>
                 </div>
 
                 <div class="field full">
                   <label for="visitaSportiva">Foto visita sportiva *</label>
-                  <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
+                  <input type="file" id="visitaSportiva" accept="image/*" required />
+                  <div class="hint">Da smartphone puoi scegliere se scattare una foto o selezionarla dalla galleria.</div>
                 </div>
               </div>
             </div>
@@ -1096,9 +1143,11 @@
 
         row.innerHTML = `
           <div class="role-name">${role}</div>
-          <div class="role-count">${info.current}/${info.max}</div>
-          <div class="role-meta">Posti occupati su disponibili</div>
-          <div class="role-pill">${statusLabel}</div>
+          <div class="role-main">
+            <div class="role-count">${info.current}/${info.max}</div>
+            <div class="role-pill">${statusLabel}</div>
+          </div>
+          <div class="role-meta">Occupati su disponibili</div>
         `;
 
         rolesList.appendChild(row);
