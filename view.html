@@ -372,11 +372,11 @@
       to { transform: rotate(360deg); }
     }
 
-    @keyframes splashPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.025); }
-      100% { transform: scale(1); }
-    }
+@keyframes splashFloat {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
 
     @media (max-width: 900px) {
       .summary-grid {
@@ -389,7 +389,7 @@
       .team-name { font-size: 17px; }
       .body { padding: 16px; }
       .summary-grid { grid-template-columns: 1fr 1fr; }
-      .splash-logo { width: min(44vw, 150px); }
+      .splash-logo { width: min(52vw, 170px); }
     }
   </style>
 </head>
