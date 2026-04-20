@@ -423,6 +423,28 @@
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
     }
 
+    .section-card.minor-box {
+      display: none;
+      border: 1px solid rgba(240,193,75,0.22);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.035),
+        0 0 0 1px rgba(240,193,75,0.04);
+      background:
+        radial-gradient(circle at top right, rgba(240,193,75,0.10), transparent 26%),
+        linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.012));
+    }
+
+    .minor-alert {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(240,193,75,0.10);
+      border: 1px solid rgba(240,193,75,0.20);
+      color: #ffe8aa;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
     .section-title {
       display: flex;
       align-items: center;
@@ -558,7 +580,8 @@
       box-shadow: 0 16px 30px rgba(0,0,0,0.22);
     }
 
-    #signatureCanvas {
+    #signatureCanvas,
+    #signatureCanvas2 {
       display: block;
       width: 100%;
       height: 220px;
@@ -1000,6 +1023,7 @@
                 <div class="field">
                   <label for="dataNascita">Data di nascita *</label>
                   <input type="date" id="dataNascita" required />
+                  <div id="minorStatusHint" class="hint"></div>
                 </div>
 
                 <div class="field">
@@ -1045,6 +1069,42 @@
               </div>
             </div>
 
+            <div id="minorSection" class="section-card minor-box">
+              <div class="section-title">
+                <span class="section-dot"></span>
+                Compilazione per partecipante minorenne
+              </div>
+
+              <div class="minor-alert">
+                Il partecipante risulta minorenne. L’iscrizione deve essere compilata da un genitore
+                o da chi esercita la responsabilità genitoriale. In questo caso sono obbligatori
+                la dichiarazione dedicata e una seconda firma.
+              </div>
+
+              <div class="grid">
+                <div class="field full">
+                  <label>Dichiarazione genitore / responsabilità genitoriale *</label>
+                  <div class="check-row">
+                    <input type="checkbox" id="dichiarazioneGenitore" />
+                    <label for="dichiarazioneGenitore" class="check-text">
+                      Dichiaro che il presente modulo è stato compilato da un genitore o da chi esercita la responsabilità genitoriale del partecipante minorenne.
+                    </label>
+                  </div>
+                </div>
+
+                <div class="field full">
+                  <label>Seconda firma (genitore / responsabilità genitoriale) *</label>
+                  <div class="sig-box">
+                    <canvas id="signatureCanvas2"></canvas>
+                    <div class="sig-actions">
+                      <button type="button" class="btn btn-secondary" id="clearSignatureBtn2">Pulisci seconda firma</button>
+                    </div>
+                  </div>
+                  <div class="hint">Firma obbligatoria solo per i minorenni.</div>
+                </div>
+              </div>
+            </div>
+
             <div class="section-card">
               <div class="section-title">
                 <span class="section-dot"></span>
@@ -1077,11 +1137,11 @@
                   <label>Accettazione documenti *</label>
                   <div class="check-row">
                     <input type="checkbox" id="accettazione" required />
-<label for="accettazione" class="check-text">
-  <a href="#" class="legal-link open-legal-modal">
-    Dichiaro di aver letto e di accettare il regolamento, la dichiarazione di responsabilità, i termini della liberatoria e acconsento all’utilizzo, alla pubblicazione e alla diffusione di immagini e video ripresi durante il torneo sui social network (Instagram, Facebook) e nel materiale promozionale dell’evento.
-  </a>
-</label>
+                    <label for="accettazione" class="check-text">
+                      <a href="#" class="legal-link open-legal-modal">
+                        Dichiaro di aver letto e di accettare il regolamento, la dichiarazione di responsabilità, i termini della liberatoria e acconsento all’utilizzo, alla pubblicazione e alla diffusione di immagini e video ripresi durante il torneo sui social network (Instagram, Facebook) e nel materiale promozionale dell’evento.
+                      </a>
+                    </label>
                   </div>
                 </div>
 
@@ -1204,15 +1264,15 @@
         <div class="modal-divider"></div>
 
         <h3>DICHIARAZIONE FINALE</h3>
-<p>
-  Il/La sottoscritto/a dichiara di aver letto e compreso l’informativa
-  e presta il consenso al trattamento dei dati personali.
-</p>
-<p>
-  Inoltre acconsente all’utilizzo, alla pubblicazione e alla diffusione
-  di immagini e video ripresi durante il torneo sui social network
-  (Instagram, Facebook) e nel materiale promozionale dell’evento.
-</p>
+        <p>
+          Il/La sottoscritto/a dichiara di aver letto e compreso l’informativa
+          e presta il consenso al trattamento dei dati personali.
+        </p>
+        <p>
+          Inoltre acconsente all’utilizzo, alla pubblicazione e alla diffusione
+          di immagini e video ripresi durante il torneo sui social network
+          (Instagram, Facebook) e nel materiale promozionale dell’evento.
+        </p>
       </div>
     </div>
   </div>
@@ -1237,6 +1297,11 @@
     const legalModal = document.getElementById('legalModal');
     const closeLegalModalBtn = document.getElementById('closeLegalModalBtn');
     const splashStartedAt = Date.now();
+
+    const dataNascitaInput = document.getElementById('dataNascita');
+    const minorSection = document.getElementById('minorSection');
+    const minorStatusHint = document.getElementById('minorStatusHint');
+    const dichiarazioneGenitoreInput = document.getElementById('dichiarazioneGenitore');
 
     function showAppAfterSplash() {
       const elapsed = Date.now() - splashStartedAt;
@@ -1420,6 +1485,9 @@
           if (window.refreshSignatureCanvas) {
             window.refreshSignatureCanvas();
           }
+          if (window.refreshSignatureCanvas2) {
+            window.refreshSignatureCanvas2();
+          }
         });
       } catch (err) {
         loadingBox.style.display = 'none';
@@ -1465,8 +1533,8 @@
       });
     }
 
-    function setupSignatureCanvas() {
-      const canvas = document.getElementById('signatureCanvas');
+    function buildSignaturePad(canvasId, clearBtnId, refreshName, getterName) {
+      const canvas = document.getElementById(canvasId);
       const ctx = canvas.getContext('2d');
 
       let drawing = false;
@@ -1528,8 +1596,12 @@
         drawing = false;
       }
 
-      window.refreshSignatureCanvas = function () {
+      window[refreshName] = function () {
         resizeCanvas();
+      };
+
+      window[getterName] = function () {
+        return hasSignature ? canvas.toDataURL('image/png') : '';
       };
 
       window.addEventListener('resize', resizeCanvas);
@@ -1567,16 +1639,84 @@
 
       canvas.addEventListener('touchend', endStroke, { passive: false });
 
-      document.getElementById('clearSignatureBtn').addEventListener('click', () => {
+      document.getElementById(clearBtnId).addEventListener('click', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         initContext();
         drawing = false;
         hasSignature = false;
       });
 
-      window.getSignatureDataUrl = function () {
-        return hasSignature ? canvas.toDataURL('image/png') : '';
-      };
+      resizeCanvas();
+    }
+
+    function setupSignatureCanvases() {
+      buildSignaturePad('signatureCanvas', 'clearSignatureBtn', 'refreshSignatureCanvas', 'getSignatureDataUrl');
+      buildSignaturePad('signatureCanvas2', 'clearSignatureBtn2', 'refreshSignatureCanvas2', 'getSignatureDataUrl2');
+    }
+
+    function parseBirthDate(dateString) {
+      if (!dateString) return null;
+      const match = String(dateString).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!match) return null;
+
+      const y = Number(match[1]);
+      const m = Number(match[2]) - 1;
+      const d = Number(match[3]);
+
+      const dt = new Date(y, m, d);
+      if (
+        dt.getFullYear() !== y ||
+        dt.getMonth() !== m ||
+        dt.getDate() !== d
+      ) {
+        return null;
+      }
+
+      return dt;
+    }
+
+    function isMinorByBirthDate(dateString) {
+      const birthDate = parseBirthDate(dateString);
+      if (!birthDate) return false;
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+
+      return age < 18;
+    }
+
+    function updateMinorSection() {
+      const birthValue = dataNascitaInput.value;
+      const isMinor = isMinorByBirthDate(birthValue);
+
+      if (!birthValue) {
+        minorSection.style.display = 'none';
+        minorStatusHint.textContent = '';
+        dichiarazioneGenitoreInput.checked = false;
+        return;
+      }
+
+      if (isMinor) {
+        minorSection.style.display = 'block';
+        minorStatusHint.textContent = 'Partecipante minorenne: sarà richiesta dichiarazione del genitore/tutore e seconda firma.';
+        requestAnimationFrame(() => {
+          if (window.refreshSignatureCanvas2) {
+            window.refreshSignatureCanvas2();
+          }
+        });
+      } else {
+        minorSection.style.display = 'none';
+        minorStatusHint.textContent = 'Partecipante maggiorenne.';
+        dichiarazioneGenitoreInput.checked = false;
+      }
     }
 
     async function fileToBase64(file) {
@@ -1596,6 +1736,9 @@
       return `${gg}/${mm}/${yyyy}`;
     }
 
+    dataNascitaInput.addEventListener('change', updateMinorSection);
+    dataNascitaInput.addEventListener('input', updateMinorSection);
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       statusBox.style.display = 'none';
@@ -1604,6 +1747,21 @@
       if (!signatureDataUrl) {
         showStatus('err', 'Firma obbligatoria.');
         return;
+      }
+
+      const isMinor = isMinorByBirthDate(document.getElementById('dataNascita').value);
+      const secondSignatureDataUrl = window.getSignatureDataUrl2();
+
+      if (isMinor) {
+        if (!dichiarazioneGenitoreInput.checked) {
+          showStatus('err', 'Per i minorenni devi dichiarare che il modulo è compilato da un genitore o da chi esercita la responsabilità genitoriale.');
+          return;
+        }
+
+        if (!secondSignatureDataUrl) {
+          showStatus('err', 'Per i minorenni è obbligatoria la seconda firma.');
+          return;
+        }
       }
 
       try {
@@ -1638,7 +1796,9 @@
           email: document.getElementById('email').value.trim(),
           ruolo: document.getElementById('ruolo').value,
           accettazione: document.getElementById('accettazione').checked,
+          dichiarazione_genitore: isMinor ? dichiarazioneGenitoreInput.checked : false,
           firma_base64: signatureDataUrl,
+          firma2_base64: isMinor ? secondSignatureDataUrl : '',
           documento_identita: {
             name: docFile.name,
             data: await fileToBase64(docFile)
@@ -1663,7 +1823,8 @@
     });
 
     setupLegalModal();
-    setupSignatureCanvas();
+    setupSignatureCanvases();
+    updateMinorSection();
     loadTeamInfo();
   </script>
 </body>
