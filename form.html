@@ -515,8 +515,12 @@
     }
 
     .field input[type="file"] {
-      padding: 12px;
-      background: rgba(255,255,255,0.025);
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
     }
 
     .field select {
@@ -536,6 +540,45 @@
       font-size: 12px;
       color: var(--muted);
       line-height: 1.45;
+    }
+
+    .upload-box {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--line);
+    }
+
+    .upload-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .upload-btn {
+      width: 100%;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .upload-file-name {
+      display: none;
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 13px;
+      background: rgba(55,214,122,0.10);
+      border: 1px solid rgba(55,214,122,0.22);
+      color: #baf3cf;
+      font-size: 13px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    .upload-file-name.show {
+      display: block;
     }
 
     .check-row {
@@ -1004,6 +1047,10 @@
         min-width: 0;
       }
 
+      .upload-actions {
+        grid-template-columns: 1fr;
+      }
+
       .modal-card {
         max-height: 92vh;
         border-radius: 18px;
@@ -1199,15 +1246,29 @@
 
               <div class="grid">
                 <div class="field full">
-                  <label for="docIdentita">Foto documento identità *</label>
-                  <input type="file" id="docIdentita" accept="image/*" capture="environment" required />
-                  <div class="hint">Da smartphone puoi scegliere se scattare una foto o selezionarla dalla galleria.</div>
+                  <label>Documento identità *</label>
+                  <div class="upload-box">
+                    <div class="upload-actions">
+                      <button type="button" class="btn btn-primary upload-btn" id="docCameraBtn">Scatta foto</button>
+                      <button type="button" class="btn btn-secondary upload-btn" id="docArchiveBtn">Galleria / Archivio</button>
+                    </div>
+                    <div id="docIdentitaName" class="upload-file-name"></div>
+                    <input type="file" id="docIdentita" accept="image/*,.pdf" required />
+                  </div>
+                  <div class="hint">Puoi scattare una foto oppure scegliere un file già presente da galleria o archivio. Sono accettati immagini e PDF.</div>
                 </div>
 
                 <div class="field full">
-                  <label for="visitaSportiva">Foto visita sportiva *</label>
-                  <input type="file" id="visitaSportiva" accept="image/*" capture="environment" required />
-                  <div class="hint">Da smartphone puoi scegliere se scattare una foto o selezionarla dalla galleria.</div>
+                  <label>Visita sportiva *</label>
+                  <div class="upload-box">
+                    <div class="upload-actions">
+                      <button type="button" class="btn btn-primary upload-btn" id="visitaCameraBtn">Scatta foto</button>
+                      <button type="button" class="btn btn-secondary upload-btn" id="visitaArchiveBtn">Galleria / Archivio</button>
+                    </div>
+                    <div id="visitaSportivaName" class="upload-file-name"></div>
+                    <input type="file" id="visitaSportiva" accept="image/*,.pdf" required />
+                  </div>
+                  <div class="hint">Puoi scattare una foto oppure scegliere un file già presente da galleria o archivio. Sono accettati immagini e PDF.</div>
                 </div>
               </div>
             </div>
@@ -1775,6 +1836,66 @@
       buildSignaturePad('signatureCanvas2', 'clearSignatureBtn2', 'refreshSignatureCanvas2', 'getSignatureDataUrl2');
     }
 
+    function setupUploadChoice(config) {
+      const input = document.getElementById(config.inputId);
+      const cameraBtn = document.getElementById(config.cameraBtnId);
+      const archiveBtn = document.getElementById(config.archiveBtnId);
+      const nameBox = document.getElementById(config.nameBoxId);
+
+      if (!input || !cameraBtn || !archiveBtn || !nameBox) return;
+
+      function resetInputBeforeOpen() {
+        input.value = '';
+      }
+
+      function openCamera() {
+        resetInputBeforeOpen();
+        input.setAttribute('accept', 'image/*');
+        input.setAttribute('capture', 'environment');
+        input.click();
+      }
+
+      function openArchive() {
+        resetInputBeforeOpen();
+        input.setAttribute('accept', 'image/*,.pdf');
+        input.removeAttribute('capture');
+        input.click();
+      }
+
+      function updateName() {
+        const file = input.files && input.files[0] ? input.files[0] : null;
+        if (!file) {
+          nameBox.classList.remove('show');
+          nameBox.textContent = '';
+          return;
+        }
+
+        const sizeMb = file.size ? (file.size / 1024 / 1024).toFixed(2) : '0.00';
+        nameBox.textContent = 'File selezionato: ' + file.name + ' (' + sizeMb + ' MB)';
+        nameBox.classList.add('show');
+      }
+
+      cameraBtn.addEventListener('click', openCamera);
+      archiveBtn.addEventListener('click', openArchive);
+      input.addEventListener('change', updateName);
+    }
+
+    function setupFileUploads() {
+      setupUploadChoice({
+        inputId: 'docIdentita',
+        cameraBtnId: 'docCameraBtn',
+        archiveBtnId: 'docArchiveBtn',
+        nameBoxId: 'docIdentitaName'
+      });
+
+      setupUploadChoice({
+        inputId: 'visitaSportiva',
+        cameraBtnId: 'visitaCameraBtn',
+        archiveBtnId: 'visitaArchiveBtn',
+        nameBoxId: 'visitaSportivaName'
+      });
+    }
+
     function parseBirthDate(dateString) {
       if (!dateString) return null;
       const match = String(dateString).match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -1946,6 +2067,7 @@
     setupLegalModal();
     setupWarningModal();
     setupSignatureCanvases();
+    setupFileUploads();
     updateMinorSection();
     loadTeamInfo();
   </script>
