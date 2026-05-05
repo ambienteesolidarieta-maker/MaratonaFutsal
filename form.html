@@ -1450,6 +1450,8 @@
     let teamToken = '';
     let teamCodeFromUrl = '';
     let teamInfo = null;
+    let isSubmitting = false;
+    let registrationCompleted = false;
 
     const loadingBox = document.getElementById('loadingBox');
     const form = document.getElementById('registrationForm');
@@ -1481,49 +1483,93 @@
     }
 
     function showStatus(type, message) {
+      statusBox.style.display = 'block';
       statusBox.className = 'status ' + type;
       statusBox.innerHTML = message;
+
+      statusBox.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+
+    function hideStatus() {
+      statusBox.style.display = 'none';
+      statusBox.className = 'status';
+      statusBox.innerHTML = '';
+    }
+
+    function resetSubmitButton() {
+      if (registrationCompleted) return;
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Invia iscrizione';
     }
 
     function setBusy(isBusy) {
       busyOverlay.classList.toggle('show', isBusy);
       document.body.classList.toggle('is-busy', isBusy);
+      busyOverlay.setAttribute('aria-hidden', isBusy ? 'false' : 'true');
 
       const controls = form.querySelectorAll('input, select, button, textarea');
       controls.forEach(el => {
-        if (isBusy) {
+        if (isBusy || registrationCompleted) {
           el.setAttribute('disabled', 'disabled');
         } else {
           el.removeAttribute('disabled');
         }
       });
 
-      if (!isBusy) {
+      if (isBusy) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Invio in corso...';
+      } else if (registrationCompleted) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Iscrizione già inviata';
+      } else {
         submitBtn.disabled = false;
+        submitBtn.textContent = 'Invia iscrizione';
       }
     }
 
-    function showSuccessAndClose() {
-      document.body.className = '';
-      document.body.innerHTML = `
-        <div class="success-screen">
-          <div class="success-card">
-            <div class="success-icon">✓</div>
-            <h2 class="success-title">Invio completato</h2>
-            <p class="success-text">
-              La richiesta è stata inviata correttamente.<br>
-              Questa finestra può essere chiusa.
-            </p>
-          </div>
-        </div>
-      `;
+    function clearSignatureByButton(buttonId) {
+      const btn = document.getElementById(buttonId);
+      if (!btn) return;
+      const wasDisabled = btn.disabled;
+      btn.disabled = false;
+      btn.click();
+      btn.disabled = wasDisabled;
+    }
 
-      setTimeout(() => {
-        try {
-          window.open('', '_self');
-          window.close();
-        } catch (e) {}
-      }, 1200);
+    function clearUploadName(nameBoxId) {
+      const box = document.getElementById(nameBoxId);
+      if (!box) return;
+      box.classList.remove('show');
+      box.textContent = '';
+    }
+
+    function showSuccessAndClose() {
+      registrationCompleted = true;
+      isSubmitting = false;
+
+      setBusy(false);
+
+      form.reset();
+      clearSignatureByButton('clearSignatureBtn');
+      clearSignatureByButton('clearSignatureBtn2');
+      clearUploadName('docIdentitaName');
+      clearUploadName('visitaSportivaName');
+      updateMinorSection();
+
+      showStatus('ok', '<strong>Iscrizione inviata correttamente.</strong><br>I dati sono stati registrati.<br>Puoi chiudere questa pagina.');
+
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Iscrizione già inviata';
     }
 
     function getUrlParams() {
@@ -1671,11 +1717,13 @@
 
       function openModal() {
         legalModal.classList.add('show');
+        legalModal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('modal-open');
       }
 
       function closeModal() {
         legalModal.classList.remove('show');
+        legalModal.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('modal-open');
       }
 
@@ -1704,6 +1752,7 @@
     function setupWarningModal() {
       function closeWarningModal() {
         warningModal.classList.remove('show');
+        warningModal.setAttribute('aria-hidden', 'true');
       }
 
       closeWarningModalBtn.addEventListener('click', closeWarningModal);
@@ -1742,6 +1791,18 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(ratio, ratio);
         initContext();
+      }
+
+      function clearCanvas() {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        ctx.scale(ratio, ratio);
+        initContext();
+
+        drawing = false;
+        hasSignature = false;
       }
 
       function getPoint(e) {
@@ -1822,10 +1883,7 @@
       canvas.addEventListener('touchend', endStroke, { passive: false });
 
       document.getElementById(clearBtnId).addEventListener('click', () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        initContext();
-        drawing = false;
-        hasSignature = false;
+        clearCanvas();
       });
 
       resizeCanvas();
@@ -1983,10 +2041,19 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      statusBox.style.display = 'none';
+
+      if (isSubmitting || registrationCompleted) {
+        return;
+      }
+
+      isSubmitting = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Invio in corso...';
+      hideStatus();
 
       const signatureDataUrl = window.getSignatureDataUrl();
       if (!signatureDataUrl) {
+        resetSubmitButton();
         showStatus('err', 'Firma obbligatoria.');
         return;
       }
@@ -1996,11 +2063,13 @@
 
       if (isMinor) {
         if (!dichiarazioneGenitoreInput.checked) {
+          resetSubmitButton();
           showStatus('err', 'Per i minorenni devi dichiarare che il modulo è compilato da un genitore o da chi esercita la responsabilità genitoriale.');
           return;
         }
 
         if (!secondSignatureDataUrl) {
+          resetSubmitButton();
           showStatus('err', 'Per i minorenni è obbligatoria la seconda firma.');
           return;
         }
@@ -2060,6 +2129,7 @@
         showSuccessAndClose();
       } catch (err) {
         setBusy(false);
+        resetSubmitButton();
         showStatus('err', err.message || 'Errore durante l’invio');
       }
     });
