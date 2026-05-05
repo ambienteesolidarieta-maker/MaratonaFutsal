@@ -1597,28 +1597,26 @@
     }
 
     function showSuccessAndClose() {
-      registrationCompleted = true;
-      isSubmitting = false;
+  registrationCompleted = true;
+  isSubmitting = false;
 
-      setBusy(false);
+  setBusy(false);
 
-      form.reset();
-      clearSignatureByButton('clearSignatureBtn');
-      clearSignatureByButton('clearSignatureBtn2');
-      clearUploadName('docIdentitaName');
-      clearUploadName('visitaSportivaName');
-      updateMinorSection();
-
-      showStatus('ok', '<strong>Iscrizione inviata correttamente.</strong><br>I dati sono stati registrati.<br>Puoi chiudere questa pagina.');
-
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Iscrizione già inviata';
-    }
+  document.body.className = '';
+  document.body.innerHTML = `
+    <div class="success-screen">
+      <div class="success-card">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">Iscrizione inviata correttamente</h2>
+        <p class="success-text">
+          I dati sono stati registrati con successo.<br>
+          Il modulo è stato inviato e non è necessario fare altro.<br><br>
+          Puoi chiudere questa pagina.
+        </p>
+      </div>
+    </div>
+  `;
+}
 
     function getUrlParams() {
       const params = new URLSearchParams(window.location.search);
