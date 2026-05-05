@@ -677,6 +677,12 @@
       border: 1px solid var(--line);
     }
 
+    .btn-danger {
+      background: linear-gradient(135deg, #ff6b6b, #ff9b9b);
+      color: #151515;
+      box-shadow: 0 12px 24px rgba(255,107,107,0.18);
+    }
+
     .submit-wrap {
       display: flex;
       justify-content: center;
@@ -910,8 +916,20 @@
       padding: 0 22px 24px;
     }
 
+    .duplicate-modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 22px 24px;
+    }
+
     .warning-btn {
       min-width: 220px;
+    }
+
+    .duplicate-btn {
+      width: 100%;
+      min-height: 48px;
     }
 
     .success-screen {
@@ -1093,6 +1111,11 @@
       .warning-btn {
         width: 100%;
         min-width: 0;
+      }
+
+      .duplicate-modal-actions {
+        grid-template-columns: 1fr;
+        padding: 0 16px 18px;
       }
     }
   </style>
@@ -1315,6 +1338,27 @@
     </div>
   </div>
 
+  <div id="duplicateModal" class="modal-overlay" aria-hidden="true">
+    <div class="warning-modal-card" role="dialog" aria-modal="true" aria-labelledby="duplicateModalTitle">
+      <div class="warning-modal-head">
+        <div class="warning-icon">!</div>
+        <h2 id="duplicateModalTitle" class="warning-title">Iscrizione già presente</h2>
+      </div>
+      <div class="warning-modal-body" id="duplicateModalMessage">
+        Risulta già presente un’iscrizione per questo nominativo nella squadra.
+        Vuoi sovrascrivere l’iscrizione esistente?
+      </div>
+      <div class="duplicate-modal-actions">
+        <button type="button" class="btn btn-secondary duplicate-btn" id="duplicateCancelBtn">
+          Annulla invio
+        </button>
+        <button type="button" class="btn btn-danger duplicate-btn" id="duplicateOverwriteBtn">
+          Sovrascrivi iscrizione
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="busyOverlay" class="busy-overlay" aria-hidden="true">
     <div class="busy-card">
       <div class="spinner"></div>
@@ -1462,6 +1506,10 @@
     const rolesList = document.getElementById('rolesList');
     const ruoloSelect = document.getElementById('ruolo');
     const busyOverlay = document.getElementById('busyOverlay');
+    const duplicateModal = document.getElementById('duplicateModal');
+    const duplicateModalMessage = document.getElementById('duplicateModalMessage');
+    const duplicateCancelBtn = document.getElementById('duplicateCancelBtn');
+    const duplicateOverwriteBtn = document.getElementById('duplicateOverwriteBtn');
     const legalModal = document.getElementById('legalModal');
     const closeLegalModalBtn = document.getElementById('closeLegalModalBtn');
     const warningModal = document.getElementById('warningModal');
@@ -1762,6 +1810,62 @@
           closeWarningModal();
         }
       });
+    }
+
+    function showDuplicateModal(duplicateData) {
+      return new Promise((resolve) => {
+        const nome = duplicateData?.nome || document.getElementById('nome').value.trim();
+        const cognome = duplicateData?.cognome || document.getElementById('cognome').value.trim();
+
+        duplicateModalMessage.innerHTML = `
+          Risulta già presente un’iscrizione per <strong>${nome} ${cognome}</strong> in questa squadra.<br><br>
+          Vuoi sovrascrivere l’iscrizione esistente?<br><br>
+          Se scegli <strong>Sovrascrivi</strong>, il vecchio modulo e i vecchi allegati saranno eliminati e verrà generata una nuova iscrizione.<br>
+          Se scegli <strong>Annulla</strong>, non verrà modificato niente.
+        `;
+
+        function cleanup(result) {
+          duplicateModal.classList.remove('show');
+          duplicateModal.setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('modal-open');
+          duplicateOverwriteBtn.removeEventListener('click', onOverwrite);
+          duplicateCancelBtn.removeEventListener('click', onCancel);
+          resolve(result);
+        }
+
+        function onOverwrite() {
+          cleanup(true);
+        }
+
+        function onCancel() {
+          cleanup(false);
+        }
+
+        duplicateOverwriteBtn.addEventListener('click', onOverwrite);
+        duplicateCancelBtn.addEventListener('click', onCancel);
+
+        duplicateModal.classList.add('show');
+        duplicateModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('modal-open');
+      });
+    }
+
+    async function checkDuplicateRegistration() {
+      const data = await postJson({
+        action: 'checkDuplicateRegistration',
+        team_code: teamInfo?.team_code || teamCodeFromUrl,
+        token: teamToken,
+        token_form: teamToken,
+        nome: document.getElementById('nome').value.trim(),
+        cognome: document.getElementById('cognome').value.trim(),
+        data_nascita: document.getElementById('dataNascita').value
+      });
+
+      if (!data.ok) {
+        throw new Error(data.error || 'Errore durante il controllo doppioni');
+      }
+
+      return data;
     }
 
     function buildSignaturePad(canvasId, clearBtnId, refreshName, getterName) {
@@ -2088,6 +2192,23 @@
 
         setBusy(true);
 
+        let overwriteExisting = false;
+        const duplicateCheck = await checkDuplicateRegistration();
+
+        if (duplicateCheck.duplicate) {
+          setBusy(false);
+          const confirmOverwrite = await showDuplicateModal(duplicateCheck);
+
+          if (!confirmOverwrite) {
+            resetSubmitButton();
+            showStatus('err', 'Invio annullato. Nessun dato è stato modificato.');
+            return;
+          }
+
+          overwriteExisting = true;
+          setBusy(true);
+        }
+
         const payload = {
           action: 'submitRegistration',
           team_code: teamInfo?.team_code || teamCodeFromUrl,
@@ -2108,6 +2229,7 @@
           ruolo: document.getElementById('ruolo').value,
           accettazione: document.getElementById('accettazione').checked,
           dichiarazione_genitore: isMinor ? dichiarazioneGenitoreInput.checked : false,
+          overwrite: overwriteExisting,
           firma_base64: signatureDataUrl,
           firma2_base64: isMinor ? secondSignatureDataUrl : '',
           documento_identita: {
