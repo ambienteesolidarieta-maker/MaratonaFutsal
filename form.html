@@ -1949,7 +1949,11 @@
         return hasSignature ? canvas.toDataURL('image/png') : '';
       };
 
-      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('resize', () => {
+  if (!hasSignature) {
+    resizeCanvas();
+  }
+});
 
       canvas.addEventListener('mousedown', (e) => {
         const p = getPoint(e);
